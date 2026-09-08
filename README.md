@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GOPANG IT SOLUTION — GoPang Nexus
 
-## Getting Started
+A professional, high-performance marketing website and secure client portal for GOPANG IT SOLUTION. Built with a focus on clean design, strict security, and excellent user experience.
 
-First, run the development server:
+## 🚀 Features
 
+### Marketing Website
+* **Modern Design:** Typography-first, clean interface using a custom OKLCH color palette (dark slate & blue accent). 
+* **Static Generation:** High-performance static routing for Services and Portfolio projects.
+* **Consultation Flow:** Dynamic consultation request forms with integrated email notifications via Resend.
+* **Responsive:** Fully mobile-optimized layouts without relying on generic, heavy illustrations.
+
+### Secure Client Portal (GoPang Nexus)
+* **Invite-Only Access:** Clients can only access the portal via admin invitations to ensure security.
+* **Role-Based Access Control (RBAC):** Supabase Row Level Security (RLS) ensures clients can only see their own projects, tickets, and invoices.
+* **Dashboard Overview:** Real-time visibility into active projects, outstanding balances, and open support tickets.
+* **Support Ticketing System:** Threaded messaging for support requests. Internal team notes are hidden from clients at the database level.
+* **Invoices:** Clean financial tracking with itemized invoices.
+* **File Management:** Secure, signed-URL based file downloads to prevent unauthorized access to project assets.
+
+## 🛠️ Tech Stack
+
+* **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+* **Frontend:** [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
+* **Styling:** [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/)
+* **Backend & Auth:** [Supabase](https://supabase.com/) (PostgreSQL, Auth, Storage)
+* **Form Validation:** React Hook Form + Zod
+* **Emails:** [Resend](https://resend.com/)
+
+## 💻 Getting Started
+
+### 1. Clone the repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/YOUR_USERNAME/gopang-nexus.git
+cd gopang-nexus
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Configure Environment Variables
+Create a `.env.local` file in the root directory by copying the example file:
+```bash
+cp .env.local.example .env.local
+```
+Fill in your Supabase URL, Anon Key, Service Role Key, and Resend API key.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Database Setup (Supabase)
+Run the SQL scripts located in the `supabase/` directory in your Supabase SQL Editor in the following order:
+1. `supabase/migrations/001_schema.sql` (Creates tables)
+2. `supabase/migrations/002_rls.sql` (Applies security policies)
+3. `supabase/seed.sql` (Inserts initial portfolio and service data)
 
-## Learn More
+### 5. Run the development server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
 
-To learn more about Next.js, take a look at the following resources:
+## 🛡️ Security Note
+This project utilizes strict Supabase Row Level Security (RLS). Server actions rely on `supabase.auth.getUser()` to securely verify identities on the backend before executing any database writes. 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+All rights reserved. GOPANG IT SOLUTION.
