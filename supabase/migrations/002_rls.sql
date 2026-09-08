@@ -63,7 +63,7 @@ create policy "projects_client_select"
   using (client_id = auth.uid() or public.is_admin());
 
 create policy "projects_admin_all"
-  on public.projects for insert update delete
+  on public.projects for all
   using (public.is_admin());
 
 -- ============================================================
@@ -81,7 +81,7 @@ create policy "milestones_client_select"
   );
 
 create policy "milestones_admin_all"
-  on public.project_milestones for insert update delete
+  on public.project_milestones for all
   using (public.is_admin());
 
 -- ============================================================
@@ -98,7 +98,7 @@ create policy "updates_client_select"
   );
 
 create policy "updates_admin_all"
-  on public.project_updates for insert update delete
+  on public.project_updates for all
   using (public.is_admin());
 
 -- ============================================================
@@ -115,7 +115,7 @@ create policy "files_client_select"
   );
 
 create policy "files_admin_all"
-  on public.project_files for insert update delete
+  on public.project_files for all
   using (public.is_admin());
 
 -- ============================================================
@@ -130,7 +130,7 @@ create policy "tickets_client_insert"
   with check (client_id = auth.uid());
 
 create policy "tickets_admin_all"
-  on public.tickets for update delete
+  on public.tickets for all
   using (public.is_admin());
 
 -- ============================================================
@@ -162,7 +162,7 @@ create policy "messages_client_insert"
   );
 
 create policy "messages_admin_all"
-  on public.ticket_messages for insert update delete
+  on public.ticket_messages for all
   using (public.is_admin());
 
 -- ============================================================
@@ -173,7 +173,7 @@ create policy "invoices_client_select"
   using (client_id = auth.uid() or public.is_admin());
 
 create policy "invoices_admin_all"
-  on public.invoices for insert update delete
+  on public.invoices for all
   using (public.is_admin());
 
 -- ============================================================
@@ -190,19 +190,19 @@ create policy "invoice_items_client_select"
   );
 
 create policy "invoice_items_admin_all"
-  on public.invoice_items for insert update delete
+  on public.invoice_items for all
   using (public.is_admin());
 
 -- ============================================================
 -- NOTIFICATIONS
 -- ============================================================
 create policy "notifications_own"
-  on public.notifications for select update
+  on public.notifications for all
   using (user_id = auth.uid() or public.is_admin());
 
 create policy "notifications_admin_insert"
   on public.notifications for insert
-  using (public.is_admin());
+  with check (public.is_admin());
 
 -- ============================================================
 -- PUBLIC CONTENT (services, portfolio, blog)
@@ -213,7 +213,7 @@ create policy "services_public_read"
   using (published = true or public.is_admin());
 
 create policy "services_admin_write"
-  on public.services for insert update delete
+  on public.services for all
   using (public.is_admin());
 
 create policy "portfolio_public_read"
@@ -221,7 +221,7 @@ create policy "portfolio_public_read"
   using (published = true or public.is_admin());
 
 create policy "portfolio_admin_write"
-  on public.portfolio_projects for insert update delete
+  on public.portfolio_projects for all
   using (public.is_admin());
 
 create policy "blog_public_read"
@@ -229,5 +229,5 @@ create policy "blog_public_read"
   using (published = true or public.is_admin());
 
 create policy "blog_admin_write"
-  on public.blog_posts for insert update delete
+  on public.blog_posts for all
   using (public.is_admin());
