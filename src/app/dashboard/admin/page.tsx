@@ -13,7 +13,7 @@ export default async function AdminOverviewPage() {
   // Fetch summary counts for the admin overview
   const [clientsRes, projectsRes, ticketsRes] = await Promise.all([
     supabase.from("profiles").select("id", { count: "exact" }).eq("role", "client"),
-    supabase.from("projects").select("id, status, title", { count: "exact" }).in("status", ["scoping", "active", "review"]),
+    supabase.from("projects").select("id, status, name", { count: "exact" }).in("status", ["planning", "in_development", "review"]),
     supabase.from("tickets").select("id, status, subject, priority, created_at").in("status", ["open", "in_progress"]).order("created_at", { ascending: false }).limit(10)
   ]);
 
