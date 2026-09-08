@@ -133,3 +133,57 @@ export async function resetPasswordAction(
 
   redirect("/dashboard");
 }
+
+const registerSchema = z.object({
+  fullName: z.string().min(2, "Full name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      "Password must include uppercase, lowercase, and a number"
+    ),
+});
+
+export async function registerAction(
+  _prev: AuthActionState,
+  formData: FormData
+): Promise<AuthActionState> {
+  const raw = {
+    fullName: formData.get("fullName"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+  };
+
+  const result = registerSchema.safeParse(raw);
+  if (!result.success) {
+    return { status: "error", message: result.error.errors[0]?.message ?? "Invalid input." };
+  }
+
+  const supabase = await createClient();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+  const { data, error } = await supabase.auth.signUp({
+    email: result.data.email,
+    password: result.data.password,
+    options: {
+      data: {
+        full_name: result.data.fullName,
+      },
+      emailRedirectTo: `${siteUrl}/api/auth/callback`,
+    },
+  });
+
+  if (error) {
+    return {
+      status: "error",
+      message: error.message,
+    };
+  }
+
+  return {
+    status: "success",
+    message: "Registration successful! You can now log in.",
+  };
+}

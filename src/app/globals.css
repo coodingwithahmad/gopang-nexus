@@ -118,6 +118,18 @@
   --chart-5: oklch(0.577 0.245 27.3);
 }
 
+@layer utilities {
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .bg-dot-pattern {
+    background-image: radial-gradient(hsl(var(--muted-foreground) / 0.2) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
