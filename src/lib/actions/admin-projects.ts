@@ -4,10 +4,10 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
-export async function createPortfolioProjectAction(formData: FormData) {
+export async function createPortfolioProjectAction(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { status: "error", message: "Unauthorized" };
+  if (!user) throw new Error("Unauthorized");
 
   const title = formData.get("title") as string;
   const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -28,7 +28,7 @@ export async function createPortfolioProjectAction(formData: FormData) {
   });
 
   if (error) {
-    return { status: "error", message: error.message };
+    throw new Error(error.message);
   }
 
   revalidatePath("/projects");
@@ -36,17 +36,17 @@ export async function createPortfolioProjectAction(formData: FormData) {
   redirect("/dashboard/admin/projects");
 }
 
-export async function deletePortfolioProjectAction(formData: FormData) {
+export async function deletePortfolioProjectAction(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { status: "error", message: "Unauthorized" };
+  if (!user) throw new Error("Unauthorized");
 
   const id = formData.get("id") as string;
 
   const { error } = await supabase.from("portfolio_projects").delete().eq("id", id);
 
   if (error) {
-    return { status: "error", message: error.message };
+    throw new Error(error.message);
   }
 
   revalidatePath("/projects");
