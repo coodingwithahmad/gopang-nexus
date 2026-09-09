@@ -89,8 +89,8 @@ export async function createTicketAction(
     console.error("[Ticket] Message insert error:", msgError);
   }
 
-  revalidatePath("/dashboard/tickets");
-  redirect(`/dashboard/tickets/${ticket.id}`);
+  revalidatePath("/dashboard/chats");
+  redirect(`/dashboard/chats/${ticket.id}`);
 }
 
 export async function replyToTicketAction(
@@ -149,7 +149,7 @@ export async function replyToTicketAction(
     };
   }
 
-  revalidatePath(`/dashboard/tickets/${ticketId}`);
+  revalidatePath(`/dashboard/chats/${ticketId}`);
   return { status: "success" };
 }
 
@@ -190,6 +190,6 @@ export async function quickDiscussionAction(
     is_internal: false,
   });
 
-  revalidatePath("/dashboard/tickets");
-  redirect(`/dashboard/tickets/${ticket.id}`);
+  revalidatePath("/dashboard/chats");
+  redirect(`/dashboard/chats/${ticket.id}`);
 }

@@ -1,21 +1,22 @@
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { getProjectBySlug, portfolioProjects } from "@/lib/data/portfolio";
+import { createClient } from "@/lib/supabase/server";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return portfolioProjects.map((p) => ({ slug: p.slug }));
-}
+export const revalidate = 0;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
-  if (!project) return {};
+  const supabase = await createClient();
+  const { data: project } = await supabase.from("portfolio_projects").select("title, summary").eq("slug", slug).single();
+
+  if (!project) return { title: "Not Found" };
+
   return {
     title: project.title,
     description: project.summary,
@@ -24,83 +25,60 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProjectDetailPage({ params }: Props) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const supabase = await createClient();
+  const { data: project } = await supabase.from("portfolio_projects").select("*").eq("slug", slug).single();
 
-  if (!project) {
-    notFound();
-  }
+  if (!project) notFound();
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 lg:py-16">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-12 lg:py-16">
       <Link
         href="/projects"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
       >
-        <ArrowLeft size={14} />
-        All projects
+        <ArrowLeft size={16} />
+        Back to projects
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 lg:gap-16">
-        <div>
-          <p className="text-sm text-muted-foreground mb-2">{project.client}</p>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+      <div className="space-y-8">
+        <header>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mb-4">
             {project.title}
           </h1>
-
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {project.tags.map((tag) => (
+          <div className="flex flex-wrap gap-2 mb-6">
+            {project.tags.map((tag: string) => (
               <span
                 key={tag}
-                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground"
+                className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-secondary text-secondary-foreground"
               >
                 {tag}
               </span>
             ))}
           </div>
-
-          <p className="mt-6 text-muted-foreground leading-relaxed">
-            {project.description}
+          <p className="text-xl text-muted-foreground leading-relaxed">
+            {project.summary}
           </p>
+        </header>
 
-          <div className="mt-8 space-y-6">
-            <div>
-              <h2 className="font-semibold text-foreground mb-2">
-                The challenge
-              </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {project.challenge}
-              </p>
-            </div>
-            <div>
-              <h2 className="font-semibold text-foreground mb-2">
-                What we built
-              </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {project.solution}
-              </p>
-            </div>
+        {project.image_path && (
+          <div className="aspect-video w-full overflow-hidden rounded-xl bg-muted border border-border">
+            {/* Image would go here */}
           </div>
+        )}
+
+        <div className="prose prose-zinc dark:prose-invert max-w-none">
+          <p className="whitespace-pre-wrap">{project.description}</p>
         </div>
 
-        <aside>
-          <div className="rounded-lg border border-border p-6">
-            <p className="text-sm text-muted-foreground mb-4">
-              Building something similar?
-            </p>
-            <Link
-              href="/contact"
-              className="block text-center px-4 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-            >
-              Get in touch
-            </Link>
-            <Link
-              href="/projects"
-              className="block text-center mt-2 px-4 py-2.5 rounded-md border border-border text-foreground text-sm font-medium hover:bg-muted transition-colors"
-            >
-              View all projects
-            </Link>
-          </div>
-        </aside>
+        <div className="mt-12 pt-8 border-t border-border">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Ready to start your project?</h2>
+          <Link
+            href="/contact"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+          >
+            Get a consultation
+          </Link>
+        </div>
       </div>
     </div>
   );

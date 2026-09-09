@@ -8,8 +8,7 @@ export const marketingNav = [
 
 export const dashboardNav = [
   { label: "Overview", href: "/dashboard" },
-  { label: "Projects", href: "/dashboard/projects" },
-  { label: "Tickets", href: "/dashboard/tickets" },
+  { label: "Chats", href: "/dashboard/chats" },
   { label: "Invoices", href: "/dashboard/invoices" },
   { label: "Settings", href: "/dashboard/settings" },
 ] as const;

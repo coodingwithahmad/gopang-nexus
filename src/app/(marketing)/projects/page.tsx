@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { portfolioProjects } from "@/lib/data/portfolio";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -8,7 +8,16 @@ export const metadata: Metadata = {
     "A selection of websites, business applications, and internal tools we have built for clients.",
 };
 
-export default function ProjectsPage() {
+export const revalidate = 0; // Always fetch latest projects
+
+export default async function ProjectsPage() {
+  const supabase = await createClient();
+  const { data: portfolioProjects } = await supabase
+    .from("portfolio_projects")
+    .select("*")
+    .eq("published", true)
+    .order("sort_order", { ascending: true });
+
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 lg:py-16">
       <div className="max-w-2xl mb-12 lg:mb-16">
@@ -22,37 +31,40 @@ export default function ProjectsPage() {
       </div>
 
       <div className="space-y-px border border-border rounded-lg overflow-hidden">
-        {portfolioProjects.map((project) => (
-          <Link
-            key={project.slug}
-            href={`/projects/${project.slug}`}
-            className="group flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-6 p-5 sm:p-6 bg-background hover:bg-muted/40 transition-colors border-b border-border last:border-b-0"
-          >
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
-                <h2 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                  {project.title}
-                </h2>
-                <span className="text-xs text-muted-foreground shrink-0">
-                  {project.client}
-                </span>
+        {(!portfolioProjects || portfolioProjects.length === 0) ? (
+          <div className="p-8 text-center text-muted-foreground">
+            More projects coming soon.
+          </div>
+        ) : (
+          portfolioProjects.map((project) => (
+            <Link
+              key={project.slug}
+              href={`/projects/${project.slug}`}
+              className="group flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-6 p-5 sm:p-6 bg-background hover:bg-muted/40 transition-colors border-b border-border last:border-b-0"
+            >
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+                  <h2 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                    {project.title}
+                  </h2>
+                </div>
+                <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                  {project.summary}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {project.tags.map((tag: string) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
-                {project.summary}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))
+        )}
       </div>
 
       <div className="mt-12 pt-8 border-t border-border">

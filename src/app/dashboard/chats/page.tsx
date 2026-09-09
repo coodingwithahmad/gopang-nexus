@@ -50,7 +50,7 @@ export default async function TicketsPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-foreground">Support Tickets</h1>
         <Link
-          href="/dashboard/tickets/new"
+          href="/dashboard/chats/new"
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
         >
           <Plus size={14} />
@@ -66,7 +66,7 @@ export default async function TicketsPage() {
             conversation will appear here.
           </p>
           <Link
-            href="/dashboard/tickets/new"
+            href="/dashboard/chats/new"
             className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
           >
             <Plus size={14} />
@@ -100,7 +100,7 @@ export default async function TicketsPage() {
                 >
                   <td className="px-4 py-3">
                     <Link
-                      href={`/dashboard/tickets/${ticket.id}`}
+                      href={`/dashboard/chats/${ticket.id}`}
                       className="font-medium text-foreground hover:text-primary transition-colors"
                     >
                       {ticket.subject}
