@@ -2,131 +2,149 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate } from "@/lib/utils";
-import { Plus } from "lucide-react";
+import { formatDateTime } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Support Tickets",
+  title: "Chats",
   robots: { index: false },
 };
 
-const statusStyle: Record<string, string> = {
-  open: "bg-blue-50 text-blue-700 border border-blue-200",
-  in_progress: "bg-amber-50 text-amber-700 border border-amber-200",
-  resolved: "bg-green-50 text-green-700 border border-green-200",
-  closed: "bg-muted text-muted-foreground",
-};
-
-const priorityStyle: Record<string, string> = {
-  low: "text-muted-foreground",
-  normal: "text-foreground",
-  high: "text-amber-600",
-  urgent: "text-red-600 font-semibold",
-};
-
-export default async function TicketsPage() {
+export default async function ChatsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: tickets, error } = await supabase
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile) redirect("/login");
+
+  // CLIENT FLOW: Single Conversation
+  if (profile.role === "client") {
+    // Check if they have a ticket
+    let { data: ticket } = await supabase
+      .from("tickets")
+      .select("id")
+      .eq("client_id", user.id)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .single();
+
+    if (!ticket) {
+      // Create a master chat for them
+      const { data: newTicket, error } = await supabase
+        .from("tickets")
+        .insert({
+          client_id: user.id,
+          subject: "Direct Chat",
+          priority: "normal",
+          status: "open",
+        })
+        .select("id")
+        .single();
+        
+      if (error || !newTicket) {
+        return <div>Error creating chat.</div>;
+      }
+      ticket = newTicket;
+    }
+
+    // Redirect straight into their single chat thread
+    redirect(`/dashboard/chats/${ticket.id}`);
+  }
+
+  // ADMIN FLOW: Client Conversation Manager
+  // Fetch all tickets with their latest message
+  // Using a simplified approach since doing complex joins in Supabase JS is tricky:
+  const { data } = await supabase
     .from("tickets")
-    .select("id, subject, status, priority, created_at, updated_at")
-    .eq("client_id", user.id)
+    .select(`
+      id,
+      updated_at,
+      client:profiles!tickets_client_id_fkey(id, full_name, email)
+    `)
     .order("updated_at", { ascending: false });
 
-  if (error) {
-    return (
-      <div className="max-w-4xl mx-auto">
-        <p className="text-sm text-destructive">
-          We couldn&apos;t load your tickets. Please try again.
-        </p>
-      </div>
-    );
+  const tickets = data as any[];
+
+  // Fetch latest messages
+  const ticketIds = tickets?.map((t: any) => t.id) || [];
+  let latestMessages: Record<string, any> = {};
+  
+  if (ticketIds.length > 0) {
+    const { data: messages } = await supabase
+      .from("ticket_messages")
+      .select("ticket_id, content, created_at, is_internal")
+      .in("ticket_id", ticketIds)
+      .order("created_at", { ascending: false });
+
+    // Group by ticket_id and pick the first one
+    messages?.forEach((msg) => {
+      if (!latestMessages[msg.ticket_id]) {
+        latestMessages[msg.ticket_id] = msg;
+      }
+    });
   }
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-foreground">Support Tickets</h1>
-        <Link
-          href="/dashboard/chats/new"
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-        >
-          <Plus size={14} />
-          New ticket
-        </Link>
+      <div className="mb-6">
+        <h1 className="text-xl font-bold text-foreground">Client Conversations</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          Manage all ongoing chats with your clients.
+        </p>
       </div>
 
-      {tickets.length === 0 ? (
-        <div className="rounded-lg border border-border bg-background p-8 text-center">
-          <p className="text-sm font-medium text-foreground">No support tickets yet.</p>
-          <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
-            When you need help with a project, create a ticket and the
-            conversation will appear here.
-          </p>
-          <Link
-            href="/dashboard/chats/new"
-            className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-          >
-            <Plus size={14} />
-            Create your first ticket
-          </Link>
-        </div>
-      ) : (
-        <div className="rounded-lg border border-border overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/40">
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">
-                  Subject
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">
-                  Priority
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden sm:table-cell">
-                  Updated
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {tickets.map((ticket) => (
-                <tr
+      <div className="bg-background rounded-xl border border-border overflow-hidden shadow-sm">
+        {(!tickets || tickets.length === 0) ? (
+          <div className="p-8 text-center text-muted-foreground">
+            No active client conversations.
+          </div>
+        ) : (
+          <div className="divide-y divide-border">
+            {tickets.map((ticket: any) => {
+              const latestMsg = latestMessages[ticket.id];
+              return (
+                <Link
                   key={ticket.id}
-                  className="border-b border-border last:border-b-0 hover:bg-muted/30 transition-colors"
+                  href={`/dashboard/chats/${ticket.id}`}
+                  className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
                 >
-                  <td className="px-4 py-3">
-                    <Link
-                      href={`/dashboard/chats/${ticket.id}`}
-                      className="font-medium text-foreground hover:text-primary transition-colors"
-                    >
-                      {ticket.subject}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3 hidden md:table-cell">
-                    <span className={`capitalize text-xs ${priorityStyle[ticket.priority]}`}>
-                      {ticket.priority}
+                  <div className="flex-1 min-w-0 pr-4">
+                    <div className="flex items-baseline justify-between mb-1">
+                      <h3 className="text-sm font-semibold text-foreground truncate">
+                        {ticket.client?.full_name || "Unknown Client"}
+                      </h3>
+                      {latestMsg && (
+                        <span className="text-[10px] text-muted-foreground whitespace-nowrap ml-2">
+                          {formatDateTime(latestMsg.created_at)}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-1 truncate">
+                      {ticket.client?.email || "No email"}
+                    </p>
+                    {latestMsg && (
+                      <p className="text-sm text-muted-foreground truncate">
+                        <span className="opacity-70">{latestMsg.is_internal ? "Internal: " : ""}</span>
+                        "{latestMsg.content}"
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">
+                      &rarr;
                     </span>
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground hidden sm:table-cell">
-                    {formatDate(ticket.updated_at)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${statusStyle[ticket.status] ?? "bg-muted text-muted-foreground"}`}
-                    >
-                      {ticket.status === "in_progress" ? "In Progress" : ticket.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

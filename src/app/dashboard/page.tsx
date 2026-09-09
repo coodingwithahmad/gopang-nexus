@@ -125,7 +125,7 @@ export default async function DashboardPage() {
             <p className="text-xs text-muted-foreground mt-1">
               Need help?{" "}
               <Link
-                href="/dashboard/chats/new"
+                href="/dashboard/chats"
                 className="text-primary hover:underline"
               >
                 Start a chat.

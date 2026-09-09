@@ -26,15 +26,19 @@ export default async function DashboardLayout({
     .eq("id", user.id)
     .single();
 
-  if (!profile) {
-    redirect("/login");
-  }
+  const safeProfile = profile || {
+    id: user.id,
+    full_name: user.email?.split("@")[0] || "Client",
+    email: user.email || "no-email@example.com",
+    role: "client" as const,
+    avatar_url: null,
+  };
 
   return (
     <div className="min-h-screen flex bg-muted/30">
-      <DashboardSidebar role={profile.role} />
+      <DashboardSidebar role={safeProfile.role} />
       <div className="flex-1 flex flex-col min-w-0">
-        <DashboardHeader profile={profile} />
+        <DashboardHeader profile={safeProfile} />
         <main className="flex-1 px-4 sm:px-6 py-6">{children}</main>
       </div>
     </div>

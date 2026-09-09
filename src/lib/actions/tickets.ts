@@ -167,20 +167,31 @@ export async function quickDiscussionAction(
   const message = formData.get("message") as string;
   if (!message || message.trim() === "") return;
 
-  // Create ticket
-  const { data: ticket, error: ticketError } = await supabase
+  // Find existing chat
+  let { data: ticket } = await supabase
     .from("tickets")
-    .insert({
-      client_id: user.id,
-      project_id: null,
-      subject: "Quick Discussion",
-      priority: "normal",
-      status: "open",
-    })
     .select("id")
+    .eq("client_id", user.id)
+    .order("created_at", { ascending: true })
+    .limit(1)
     .single();
 
-  if (ticketError || !ticket) return;
+  if (!ticket) {
+    const { data: newTicket, error: ticketError } = await supabase
+      .from("tickets")
+      .insert({
+        client_id: user.id,
+        project_id: null,
+        subject: "Direct Chat",
+        priority: "normal",
+        status: "open",
+      })
+      .select("id")
+      .single();
+
+    if (ticketError || !newTicket) return;
+    ticket = newTicket;
+  }
 
   // Insert the message
   await supabase.from("ticket_messages").insert({

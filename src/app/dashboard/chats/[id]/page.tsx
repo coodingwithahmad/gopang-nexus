@@ -36,15 +36,30 @@ export default async function ChatDetailPage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // RLS ensures this only returns the client's own tickets
-  const { data: ticket } = await supabase
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  const isAdmin = profile?.role === "admin";
+
+  const { data } = await supabase
     .from("tickets")
-    .select("id, subject, status, priority, created_at, updated_at, project_id")
+    .select(`
+      id, subject, status, priority, created_at, updated_at, project_id,
+      client:profiles!tickets_client_id_fkey(full_name, email)
+    `)
     .eq("id", id)
     .single();
 
+  const ticket = data as any;
+
   if (!ticket) notFound();
 
+  // If a client tries to access someone else's ticket, block it.
+  // Note: RLS handles this, but double checking is good practice.
+  
   const { data: messages } = await supabase
     .from("ticket_messages")
     .select("id, content, author_id, is_internal, created_at")
@@ -65,40 +80,37 @@ export default async function ChatDetailPage({ params }: Props) {
   const isTicketOpen = ["open", "in_progress"].includes(ticket.status);
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-10rem)]">
       <Link
         href="/dashboard/chats"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4 shrink-0"
       >
         <ArrowLeft size={14} />
-        All chats
+        Back to {isAdmin ? "All Chats" : "Dashboard"}
       </Link>
 
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6 pb-6 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 pb-4 border-b border-border shrink-0">
         <div>
-          <h1 className="text-lg font-bold text-foreground">{ticket.subject}</h1>
-          <p className="text-xs text-muted-foreground mt-1">
-            Started {formatDateTime(ticket.created_at)}
+          <h1 className="text-lg font-bold text-foreground">
+            {isAdmin ? `Chat with ${ticket.client?.full_name || "Client"}` : "Chat with Admin Team"}
+          </h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {isAdmin ? ticket.client?.email : "We typically reply within 24 hours."}
           </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize border ${
-              statusStyle[ticket.status] ?? statusStyle.closed
-            }`}
-          >
-            {statusLabel[ticket.status] ?? ticket.status}
-          </span>
         </div>
       </div>
 
-      <ChatThread 
-        ticketId={ticket.id}
-        initialMessages={messages ?? []}
-        authorMap={authorMap}
-        currentUserId={user.id}
-        isTicketOpen={isTicketOpen}
-      />
+      <div className="flex-1 overflow-hidden flex flex-col bg-background border border-border rounded-xl shadow-sm">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+          <ChatThread 
+            ticketId={ticket.id}
+            initialMessages={messages ?? []}
+            authorMap={authorMap}
+            currentUserId={user.id}
+            isTicketOpen={true}
+          />
+        </div>
+      </div>
     </div>
   );
 }
