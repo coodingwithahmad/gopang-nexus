@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatCurrency } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Send, MessageSquarePlus } from "lucide-react";
+import { quickDiscussionAction } from "@/lib/actions/tickets";
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
@@ -46,9 +47,9 @@ export default async function DashboardPage() {
   const [projectsRes, ticketsRes, invoicesRes] = await Promise.all([
     supabase
       .from("projects")
-      .select("id, title, status, due_date, updated_at")
+      .select("id, name, status, created_at, updated_at")
       .eq("client_id", user.id)
-      .in("status", ["scoping", "active", "review", "paused"])
+      .in("status", ["planning", "in_development", "review"])
       .order("updated_at", { ascending: false })
       .limit(5),
 
@@ -82,6 +83,37 @@ export default async function DashboardPage() {
         </p>
       </div>
 
+      {/* Quick Discussion Card */}
+      <section className="bg-primary/5 border border-primary/20 rounded-xl p-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <MessageSquarePlus size={16} className="text-primary" />
+              Need to discuss something?
+            </h2>
+            <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+              Send a quick message to the admin team and we'll get right back to you.
+            </p>
+          </div>
+          <form action={quickDiscussionAction} className="flex w-full sm:w-auto gap-2">
+            <input
+              type="text"
+              name="message"
+              placeholder="Type your message..."
+              required
+              className="flex h-9 w-full sm:w-64 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+            />
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-md bg-primary px-3 py-1 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors"
+            >
+              <Send size={14} className="mr-1.5" />
+              Send
+            </button>
+          </form>
+        </div>
+      </section>
+
       {/* Active Projects */}
       <section>
         <div className="flex items-center justify-between mb-3">
@@ -113,13 +145,11 @@ export default async function DashboardPage() {
               >
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">
-                    {project.title}
+                    {project.name}
                   </p>
-                  {project.due_date && (
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Due {formatDate(project.due_date)}
-                    </p>
-                  )}
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Started {formatDate(project.created_at)}
+                  </p>
                 </div>
                 <StatusBadge status={project.status} />
               </Link>

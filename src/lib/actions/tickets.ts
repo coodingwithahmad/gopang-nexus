@@ -152,3 +152,44 @@ export async function replyToTicketAction(
   revalidatePath(`/dashboard/tickets/${ticketId}`);
   return { status: "success" };
 }
+
+export async function quickDiscussionAction(
+  formData: FormData
+): Promise<void> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return;
+
+  const message = formData.get("message") as string;
+  if (!message || message.trim() === "") return;
+
+  // Create ticket
+  const { data: ticket, error: ticketError } = await supabase
+    .from("tickets")
+    .insert({
+      client_id: user.id,
+      project_id: null,
+      subject: "Quick Discussion",
+      priority: "normal",
+      status: "open",
+    })
+    .select("id")
+    .single();
+
+  if (ticketError || !ticket) return;
+
+  // Insert the message
+  await supabase.from("ticket_messages").insert({
+    ticket_id: ticket.id,
+    author_id: user.id,
+    content: message,
+    is_internal: false,
+  });
+
+  revalidatePath("/dashboard/tickets");
+  redirect(`/dashboard/tickets/${ticket.id}`);
+}
