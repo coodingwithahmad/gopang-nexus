@@ -1,16 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { Menu, X, LogOut } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { marketingNav } from "@/config/nav";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 export function Nav() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [signingOut, setSigningOut] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    // Get initial session
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+
+    // Listen for auth changes (login/logout from other tabs, etc.)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setUser(null);
+    setSigningOut(false);
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <header className="sticky top-0 z-40 bg-background border-b border-border">
@@ -46,12 +77,23 @@ export function Nav() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Link
-            href="/login"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Client Portal
-          </Link>
+          {user ? (
+            <button
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors disabled:opacity-60"
+            >
+              <LogOut size={14} />
+              {signingOut ? "Signing out..." : "Sign Out"}
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Sign In
+            </Link>
+          )}
           <Link
             href="/contact"
             className="inline-flex items-center px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
@@ -98,13 +140,26 @@ export function Nav() {
             ))}
           </ul>
           <div className="px-4 pb-4 pt-1 flex flex-col gap-2">
-            <Link
-              href="/login"
-              onClick={() => setMobileOpen(false)}
-              className="block text-center px-4 py-2 rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
-            >
-              Client Portal
-            </Link>
+            {user ? (
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  handleSignOut();
+                }}
+                disabled={signingOut}
+                className="block text-center px-4 py-2 rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60"
+              >
+                {signingOut ? "Signing out..." : "Sign Out"}
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMobileOpen(false)}
+                className="block text-center px-4 py-2 rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
+              >
+                Sign In
+              </Link>
+            )}
             <Link
               href="/contact"
               onClick={() => setMobileOpen(false)}
