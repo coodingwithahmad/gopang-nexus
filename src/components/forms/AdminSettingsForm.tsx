@@ -4,9 +4,16 @@ import { useState } from "react";
 import { updateSettingsAction } from "@/lib/actions/settings";
 import { Loader2 } from "lucide-react";
 
-export function SettingsForm({ initialData }: { initialData: Record<string, any> }) {
+export function SettingsForm({
+  initialData,
+}: {
+  initialData: Record<string, any>;
+}) {
   const [isPending, setIsPending] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -17,9 +24,11 @@ export function SettingsForm({ initialData }: { initialData: Record<string, any>
 
     try {
       await updateSettingsAction(formData);
-      setMessage({ type: 'success', text: 'Settings saved successfully.' });
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || "An error occurred while saving." });
+      setMessage({ type: "success", text: "Settings saved successfully." });
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "An error occurred while saving.";
+      setMessage({ type: "error", text: message });
     } finally {
       setIsPending(false);
     }
@@ -28,20 +37,29 @@ export function SettingsForm({ initialData }: { initialData: Record<string, any>
   return (
     <form onSubmit={onSubmit} className="space-y-8">
       {message && (
-        <div className={`p-4 text-sm rounded-md border ${
-          message.type === 'success' 
-            ? 'bg-green-50 text-green-700 border-green-200' 
-            : 'bg-destructive/10 text-destructive border-destructive/20'
-        }`}>
+        <div
+          className={`p-4 text-sm rounded-md border ${
+            message.type === "success"
+              ? "bg-green-50 text-green-700 border-green-200"
+              : "bg-destructive/10 text-destructive border-destructive/20"
+          }`}
+        >
           {message.text}
         </div>
       )}
 
       <div>
-        <h3 className="text-lg font-medium text-foreground mb-4">Company Details</h3>
+        <h3 className="text-lg font-medium text-foreground mb-4">
+          Company Details
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
-            <label htmlFor="company_name" className="block text-sm font-medium text-foreground">Company Name</label>
+            <label
+              htmlFor="company_name"
+              className="block text-sm font-medium text-foreground"
+            >
+              Company Name
+            </label>
             <input
               id="company_name"
               name="company_name"
@@ -51,7 +69,12 @@ export function SettingsForm({ initialData }: { initialData: Record<string, any>
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="contact_email" className="block text-sm font-medium text-foreground">Contact Email</label>
+            <label
+              htmlFor="contact_email"
+              className="block text-sm font-medium text-foreground"
+            >
+              Contact Email
+            </label>
             <input
               id="contact_email"
               name="contact_email"
@@ -61,7 +84,12 @@ export function SettingsForm({ initialData }: { initialData: Record<string, any>
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="contact_phone" className="block text-sm font-medium text-foreground">Contact Phone</label>
+            <label
+              htmlFor="contact_phone"
+              className="block text-sm font-medium text-foreground"
+            >
+              Contact Phone
+            </label>
             <input
               id="contact_phone"
               name="contact_phone"
@@ -74,25 +102,43 @@ export function SettingsForm({ initialData }: { initialData: Record<string, any>
       </div>
 
       <div className="pt-4 border-t border-border">
-        <h3 className="text-lg font-medium text-foreground mb-4">Homepage Configuration</h3>
+        <h3 className="text-lg font-medium text-foreground mb-4">
+          Homepage Configuration
+        </h3>
         <div className="space-y-4">
           <div className="space-y-1">
-            <label htmlFor="hero_title" className="block text-sm font-medium text-foreground">Hero Title</label>
+            <label
+              htmlFor="hero_title"
+              className="block text-sm font-medium text-foreground"
+            >
+              Hero Title
+            </label>
             <input
               id="hero_title"
               name="hero_title"
               type="text"
-              defaultValue={initialData?.hero_title || "Empowering Your Digital Transformation"}
+              defaultValue={
+                initialData?.hero_title ||
+                "Empowering Your Digital Transformation"
+              }
               className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
           <div className="space-y-1">
-            <label htmlFor="hero_subtitle" className="block text-sm font-medium text-foreground">Hero Subtitle</label>
+            <label
+              htmlFor="hero_subtitle"
+              className="block text-sm font-medium text-foreground"
+            >
+              Hero Subtitle
+            </label>
             <textarea
               id="hero_subtitle"
               name="hero_subtitle"
               rows={2}
-              defaultValue={initialData?.hero_subtitle || "We build cutting-edge solutions that drive business growth and user engagement."}
+              defaultValue={
+                initialData?.hero_subtitle ||
+                "We build cutting-edge solutions that drive business growth and user engagement."
+              }
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>

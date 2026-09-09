@@ -35,8 +35,10 @@ export function FaqForm({ initialData }: { initialData?: Faq }) {
       } else {
         await createFaqAction(formData);
       }
-    } catch (err: any) {
-      setError(err.message || "An error occurred while saving.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "An error occurred while saving.";
+      setError(message);
       setIsPending(false);
     }
   }
@@ -51,7 +53,10 @@ export function FaqForm({ initialData }: { initialData?: Faq }) {
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="question" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="question"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Question
           </label>
           <input
@@ -66,7 +71,10 @@ export function FaqForm({ initialData }: { initialData?: Faq }) {
         </div>
 
         <div>
-          <label htmlFor="answer" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="answer"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Answer
           </label>
           <textarea
@@ -82,7 +90,10 @@ export function FaqForm({ initialData }: { initialData?: Faq }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-foreground mb-1">
+            <label
+              htmlFor="category"
+              className="block text-sm font-medium text-foreground mb-1"
+            >
               Category
             </label>
             <input
@@ -97,7 +108,10 @@ export function FaqForm({ initialData }: { initialData?: Faq }) {
           </div>
 
           <div>
-            <label htmlFor="sort_order" className="block text-sm font-medium text-foreground mb-1">
+            <label
+              htmlFor="sort_order"
+              className="block text-sm font-medium text-foreground mb-1"
+            >
               Sort Order
             </label>
             <input
@@ -118,7 +132,10 @@ export function FaqForm({ initialData }: { initialData?: Faq }) {
             defaultChecked={initialData?.is_active ?? true}
             className="h-4 w-4 rounded border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           />
-          <label htmlFor="is_active" className="text-sm font-medium text-foreground">
+          <label
+            htmlFor="is_active"
+            className="text-sm font-medium text-foreground"
+          >
             Publish FAQ
           </label>
         </div>

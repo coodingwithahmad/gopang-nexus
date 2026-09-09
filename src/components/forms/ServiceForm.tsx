@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createServiceAction, updateServiceAction } from "@/lib/actions/services";
+import {
+  createServiceAction,
+  updateServiceAction,
+} from "@/lib/actions/services";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
@@ -38,8 +41,10 @@ export function ServiceForm({ initialData }: { initialData?: Service }) {
       }
       router.push("/dashboard/admin/services");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "An error occurred while saving.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "An error occurred while saving.";
+      setError(message);
       setIsPending(false);
     }
   }
@@ -54,7 +59,10 @@ export function ServiceForm({ initialData }: { initialData?: Service }) {
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Service Title
           </label>
           <input
@@ -69,7 +77,10 @@ export function ServiceForm({ initialData }: { initialData?: Service }) {
         </div>
 
         <div>
-          <label htmlFor="summary" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="summary"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Summary
           </label>
           <textarea
@@ -84,7 +95,10 @@ export function ServiceForm({ initialData }: { initialData?: Service }) {
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Full Description (Markdown/Text)
           </label>
           <textarea
@@ -100,7 +114,10 @@ export function ServiceForm({ initialData }: { initialData?: Service }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="icon_name" className="block text-sm font-medium text-foreground mb-1">
+            <label
+              htmlFor="icon_name"
+              className="block text-sm font-medium text-foreground mb-1"
+            >
               Icon Name (Lucide)
             </label>
             <input
@@ -113,12 +130,23 @@ export function ServiceForm({ initialData }: { initialData?: Service }) {
               placeholder="e.g. Code, Monitor, Server"
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Find icons at <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="underline">lucide.dev</a>
+              Find icons at{" "}
+              <a
+                href="https://lucide.dev/icons"
+                target="_blank"
+                rel="noreferrer"
+                className="underline"
+              >
+                lucide.dev
+              </a>
             </p>
           </div>
 
           <div>
-            <label htmlFor="sort_order" className="block text-sm font-medium text-foreground mb-1">
+            <label
+              htmlFor="sort_order"
+              className="block text-sm font-medium text-foreground mb-1"
+            >
               Sort Order
             </label>
             <input
@@ -139,7 +167,10 @@ export function ServiceForm({ initialData }: { initialData?: Service }) {
             defaultChecked={initialData?.published ?? true}
             className="h-4 w-4 rounded border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           />
-          <label htmlFor="published" className="text-sm font-medium text-foreground">
+          <label
+            htmlFor="published"
+            className="text-sm font-medium text-foreground"
+          >
             Publish Service
           </label>
         </div>

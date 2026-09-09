@@ -44,9 +44,10 @@ export function ImageUpload({ name, defaultValue, bucket = "media", folder = "up
         .getPublicUrl(filePath);
 
       setImageUrl(publicUrl);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Error uploading image";
       console.error("Upload error:", err);
-      setError(err.message || "Error uploading image");
+      setError(message);
     } finally {
       setIsUploading(false);
     }

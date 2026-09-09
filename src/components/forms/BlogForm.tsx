@@ -36,8 +36,10 @@ export function BlogForm({ initialData }: { initialData?: BlogPost }) {
       }
       router.push("/dashboard/admin/blog");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "An error occurred while saving.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "An error occurred while saving.";
+      setError(message);
       setIsPending(false);
     }
   }
@@ -52,7 +54,10 @@ export function BlogForm({ initialData }: { initialData?: BlogPost }) {
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Post Title
           </label>
           <input
@@ -67,7 +72,10 @@ export function BlogForm({ initialData }: { initialData?: BlogPost }) {
         </div>
 
         <div>
-          <label htmlFor="excerpt" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="excerpt"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Excerpt
           </label>
           <textarea
@@ -82,7 +90,10 @@ export function BlogForm({ initialData }: { initialData?: BlogPost }) {
         </div>
 
         <div>
-          <label htmlFor="content" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="content"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Post Content (Markdown supported)
           </label>
           <textarea
@@ -104,7 +115,10 @@ export function BlogForm({ initialData }: { initialData?: BlogPost }) {
             defaultChecked={initialData?.published ?? false}
             className="h-4 w-4 rounded border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           />
-          <label htmlFor="published" className="text-sm font-medium text-foreground">
+          <label
+            htmlFor="published"
+            className="text-sm font-medium text-foreground"
+          >
             Publish Post
           </label>
         </div>

@@ -31,7 +31,7 @@ export function DashboardHeader({ profile }: HeaderProps) {
         >
           {initials}
         </div>
-        <span className="hidden sm:block text-sm text-foreground font-medium truncate max-w-[140px]">
+        <span className="hidden sm:block text-sm text-foreground font-medium truncate max-w-35">
           {displayName}
         </span>
       </div>

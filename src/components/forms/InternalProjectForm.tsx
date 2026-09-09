@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createInternalProjectAction, updateInternalProjectAction } from "@/lib/actions/internal-projects";
+import {
+  createInternalProjectAction,
+  updateInternalProjectAction,
+} from "@/lib/actions/internal-projects";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
@@ -42,8 +45,10 @@ export function InternalProjectForm({
       } else {
         await createInternalProjectAction(formData);
       }
-    } catch (err: any) {
-      setError(err.message || "An error occurred while saving.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "An error occurred while saving.";
+      setError(message);
       setIsPending(false);
     }
   }
@@ -58,7 +63,10 @@ export function InternalProjectForm({
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Project Name
           </label>
           <input
@@ -73,7 +81,10 @@ export function InternalProjectForm({
         </div>
 
         <div>
-          <label htmlFor="client_id" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="client_id"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Client
           </label>
           <select
@@ -83,8 +94,10 @@ export function InternalProjectForm({
             defaultValue={initialData?.client_id || ""}
             className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <option value="" disabled>Select a client</option>
-            {clients.map(c => (
+            <option value="" disabled>
+              Select a client
+            </option>
+            {clients.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.full_name || "Unknown"} ({c.email})
               </option>
@@ -93,7 +106,10 @@ export function InternalProjectForm({
         </div>
 
         <div>
-          <label htmlFor="status" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="status"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Status
           </label>
           <select
@@ -112,7 +128,10 @@ export function InternalProjectForm({
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-foreground mb-1">
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium text-foreground mb-1"
+          >
             Description / Notes
           </label>
           <textarea
@@ -127,7 +146,10 @@ export function InternalProjectForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="start_date" className="block text-sm font-medium text-foreground mb-1">
+            <label
+              htmlFor="start_date"
+              className="block text-sm font-medium text-foreground mb-1"
+            >
               Start Date
             </label>
             <input
@@ -140,7 +162,10 @@ export function InternalProjectForm({
           </div>
 
           <div>
-            <label htmlFor="due_date" className="block text-sm font-medium text-foreground mb-1">
+            <label
+              htmlFor="due_date"
+              className="block text-sm font-medium text-foreground mb-1"
+            >
               Due Date
             </label>
             <input

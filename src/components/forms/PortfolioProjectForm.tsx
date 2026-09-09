@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createPortfolioProjectAction, updatePortfolioProjectAction } from "@/lib/actions/admin-projects";
+import {
+  createPortfolioProjectAction,
+  updatePortfolioProjectAction,
+} from "@/lib/actions/admin-projects";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { ImageUpload } from "@/components/forms/ImageUpload";
@@ -19,7 +22,11 @@ type Project = {
   sort_order: number;
 };
 
-export function PortfolioProjectForm({ initialData }: { initialData?: Project }) {
+export function PortfolioProjectForm({
+  initialData,
+}: {
+  initialData?: Project;
+}) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,8 +48,10 @@ export function PortfolioProjectForm({ initialData }: { initialData?: Project })
       }
       router.push("/dashboard/admin/projects");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "An error occurred while saving.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "An error occurred while saving.";
+      setError(message);
       setIsPending(false);
     }
   }
@@ -59,7 +68,10 @@ export function PortfolioProjectForm({ initialData }: { initialData?: Project })
         <div className="md:col-span-2 space-y-6">
           <div className="space-y-4">
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-foreground mb-1">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-foreground mb-1"
+              >
                 Project Title
               </label>
               <input
@@ -74,7 +86,10 @@ export function PortfolioProjectForm({ initialData }: { initialData?: Project })
             </div>
 
             <div>
-              <label htmlFor="summary" className="block text-sm font-medium text-foreground mb-1">
+              <label
+                htmlFor="summary"
+                className="block text-sm font-medium text-foreground mb-1"
+              >
                 Summary (Max 160 chars)
               </label>
               <textarea
@@ -90,7 +105,10 @@ export function PortfolioProjectForm({ initialData }: { initialData?: Project })
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-foreground mb-1">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-foreground mb-1"
+              >
                 Full Description (Markdown supported)
               </label>
               <textarea
@@ -111,16 +129,19 @@ export function PortfolioProjectForm({ initialData }: { initialData?: Project })
             <label className="block text-sm font-medium text-foreground mb-2">
               Featured Image
             </label>
-            <ImageUpload 
-              name="image_path" 
-              defaultValue={initialData?.image_path} 
-              bucket="media" 
-              folder="portfolio" 
+            <ImageUpload
+              name="image_path"
+              defaultValue={initialData?.image_path}
+              bucket="media"
+              folder="portfolio"
             />
           </div>
 
           <div>
-            <label htmlFor="tags" className="block text-sm font-medium text-foreground mb-1">
+            <label
+              htmlFor="tags"
+              className="block text-sm font-medium text-foreground mb-1"
+            >
               Tags (Comma separated)
             </label>
             <input
@@ -135,7 +156,10 @@ export function PortfolioProjectForm({ initialData }: { initialData?: Project })
           </div>
 
           <div>
-            <label htmlFor="sort_order" className="block text-sm font-medium text-foreground mb-1">
+            <label
+              htmlFor="sort_order"
+              className="block text-sm font-medium text-foreground mb-1"
+            >
               Sort Order
             </label>
             <input
@@ -155,7 +179,10 @@ export function PortfolioProjectForm({ initialData }: { initialData?: Project })
               defaultChecked={initialData?.published ?? true}
               className="h-4 w-4 rounded border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             />
-            <label htmlFor="published" className="text-sm font-medium text-foreground">
+            <label
+              htmlFor="published"
+              className="text-sm font-medium text-foreground"
+            >
               Publish Project
             </label>
           </div>
