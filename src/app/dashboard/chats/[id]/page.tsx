@@ -80,36 +80,35 @@ export default async function ChatDetailPage({ params }: Props) {
   const isTicketOpen = ["open", "in_progress"].includes(ticket.status);
 
   return (
-    <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-10rem)]">
-      <Link
-        href="/dashboard/chats"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4 shrink-0"
-      >
-        <ArrowLeft size={14} />
-        Back to {isAdmin ? "All Chats" : "Dashboard"}
-      </Link>
-
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 pb-4 border-b border-border shrink-0">
-        <div>
-          <h1 className="text-lg font-bold text-foreground">
-            {isAdmin ? `Chat with ${ticket.client?.full_name || "Client"}` : "Chat with Admin Team"}
-          </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {isAdmin ? ticket.client?.email : "We typically reply within 24 hours."}
-          </p>
+    <div className="flex flex-col h-full bg-background relative">
+      {/* Mobile back button & Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border-b border-border shrink-0 bg-muted/20">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard/chats"
+            className="md:hidden inline-flex p-1.5 -ml-1.5 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          >
+            <ArrowLeft size={18} />
+          </Link>
+          <div>
+            <h1 className="text-base font-bold text-foreground">
+              {ticket.client?.full_name || "Unknown Client"}
+            </h1>
+            <p className="text-xs text-muted-foreground">
+              {ticket.client?.email || "No email"}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden flex flex-col bg-background border border-border rounded-xl shadow-sm">
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <ChatThread 
-            ticketId={ticket.id}
-            initialMessages={messages ?? []}
-            authorMap={authorMap}
-            currentUserId={user.id}
-            isTicketOpen={true}
-          />
-        </div>
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-muted/10 relative">
+        <ChatThread 
+          ticketId={ticket.id}
+          initialMessages={messages ?? []}
+          authorMap={authorMap}
+          currentUserId={user.id}
+          isTicketOpen={true}
+        />
       </div>
     </div>
   );

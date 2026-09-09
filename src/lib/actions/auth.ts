@@ -50,10 +50,9 @@ export async function loginAction(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(result.data);
+  const { data: authData, error } = await supabase.auth.signInWithPassword(result.data);
 
-  if (error) {
-    // Return a generic error message — don't indicate whether email or password is wrong
+  if (error || !authData?.user) {
     return {
       status: "error",
       message: "Incorrect email or password. Please try again.",
@@ -62,7 +61,23 @@ export async function loginAction(
 
   const next = formData.get("next") as string | null;
   revalidatePath("/", "layout");
-  redirect(next && next.startsWith("/") ? next : "/dashboard");
+  
+  if (next && next.startsWith("/") && next !== "/dashboard") {
+    redirect(next);
+  }
+
+  // Get user role to determine redirect
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", authData.user.id)
+    .single();
+
+  if (profile?.role === "admin") {
+    redirect("/dashboard/admin");
+  } else {
+    redirect("/"); // Clients go to public website
+  }
 }
 
 export async function logoutAction(): Promise<void> {
