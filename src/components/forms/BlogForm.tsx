@@ -34,6 +34,8 @@ export function BlogForm({ initialData }: { initialData?: BlogPost }) {
       } else {
         await createBlogPostAction(formData);
       }
+      router.push("/dashboard/admin/blog");
+      router.refresh();
     } catch (err: any) {
       setError(err.message || "An error occurred while saving.");
       setIsPending(false);

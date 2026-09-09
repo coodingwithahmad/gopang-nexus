@@ -34,7 +34,7 @@ export async function createBlogPostAction(formData: FormData) {
 
   revalidatePath("/dashboard/admin/blog");
   revalidatePath("/insights");
-  redirect("/dashboard/admin/blog");
+  // removed redirect
 }
 
 export async function updateBlogPostAction(id: string, formData: FormData) {
@@ -83,7 +83,7 @@ export async function updateBlogPostAction(id: string, formData: FormData) {
 
   revalidatePath("/dashboard/admin/blog");
   revalidatePath("/insights");
-  redirect("/dashboard/admin/blog");
+  // removed redirect
 }
 
 export async function deleteBlogPostAction(id: string) {
@@ -98,5 +98,5 @@ export async function deleteBlogPostAction(id: string) {
 
   revalidatePath("/dashboard/admin/blog");
   revalidatePath("/insights");
-  redirect("/dashboard/admin/blog");
+  // removed redirect
 }

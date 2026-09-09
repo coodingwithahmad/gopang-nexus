@@ -36,6 +36,8 @@ export function ServiceForm({ initialData }: { initialData?: Service }) {
       } else {
         await createServiceAction(formData);
       }
+      router.push("/dashboard/admin/services");
+      router.refresh();
     } catch (err: any) {
       setError(err.message || "An error occurred while saving.");
       setIsPending(false);

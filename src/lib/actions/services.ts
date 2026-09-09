@@ -52,7 +52,6 @@ export async function createServiceAction(formData: FormData) {
 
   revalidatePath("/dashboard/admin/services");
   revalidatePath("/services");
-  redirect("/dashboard/admin/services");
 }
 
 export async function updateServiceAction(id: string, formData: FormData) {
@@ -100,7 +99,6 @@ export async function updateServiceAction(id: string, formData: FormData) {
 
   revalidatePath("/dashboard/admin/services");
   revalidatePath("/services");
-  redirect("/dashboard/admin/services");
 }
 
 export async function deleteServiceAction(id: string) {

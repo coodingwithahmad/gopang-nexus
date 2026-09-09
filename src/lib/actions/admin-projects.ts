@@ -36,7 +36,7 @@ export async function createPortfolioProjectAction(formData: FormData): Promise<
 
   revalidatePath("/projects");
   revalidatePath("/dashboard/admin");
-  redirect("/dashboard/admin/projects");
+  revalidatePath("/dashboard/admin/projects");
 }
 
 export async function updatePortfolioProjectAction(id: string, formData: FormData): Promise<void> {
@@ -65,14 +65,11 @@ export async function updatePortfolioProjectAction(id: string, formData: FormDat
     sort_order,
   }).eq("id", id);
 
-  if (error) {
-    throw new Error(error.message);
-  }
+  if (error) throw new Error(error.message);
 
   revalidatePath("/projects");
   revalidatePath("/dashboard/admin");
   revalidatePath("/dashboard/admin/projects");
-  redirect("/dashboard/admin/projects");
 }
 
 export async function deletePortfolioProjectAction(formData: FormData): Promise<void> {

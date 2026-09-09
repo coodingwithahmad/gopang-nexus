@@ -1,82 +1,65 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Globe, LayoutDashboard, MessageSquare, Wrench } from "lucide-react";
-import { services } from "@/lib/data/services";
+import { ArrowRight, Code, Laptop, Shield, Cloud } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Services",
-  description:
-    "Web development, business applications, IT consulting, and ongoing maintenance for companies that need reliable software.",
+  title: "Services | GOPANG IT SOLUTION",
+  description: "Enterprise-grade software engineering, cloud infrastructure, and technical consulting.",
 };
 
-const iconMap = {
-  Globe,
-  LayoutDashboard,
-  MessageSquare,
-  Wrench,
-} as const;
+const iconMap: Record<string, React.ElementType> = {
+  Code,
+  Laptop,
+  Shield,
+  Cloud,
+};
 
-type IconName = keyof typeof iconMap;
+export const revalidate = 0; // Always fetch latest
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const supabase = await createClient();
+  const { data: services } = await supabase
+    .from("services")
+    .select("*")
+    .eq("published", true)
+    .order("sort_order", { ascending: true });
+
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 lg:py-16">
-      {/* Page header */}
-      <div className="max-w-2xl mb-12 lg:mb-16">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 lg:py-24">
+      <div className="max-w-2xl mb-16">
+        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
           Services
         </h1>
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-          We work with businesses that have specific software problems. These are
-          the four areas where we spend most of our time.
+          We don't just write code. We build scalable systems, optimize infrastructure, and solve complex business problems through technology.
         </p>
       </div>
 
-      {/* Service list */}
-      <div className="space-y-12">
-        {services.map((service) => {
-          const Icon = iconMap[service.iconName as IconName];
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-2">
+        {services?.map((service) => {
+          const IconComponent = iconMap[service.icon_name] || Code;
           return (
-            <article
-              key={service.slug}
-              className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6 lg:gap-12 py-10 border-t border-border first:border-t-0 first:pt-0"
+            <Link
+              key={service.id}
+              href={`/services/${service.slug}`}
+              className="group relative flex flex-col items-start justify-between rounded-2xl border border-border bg-background p-8 shadow-sm transition-all hover:shadow-md hover:border-primary/30"
             >
-              <div>
-                <div className="inline-flex items-center gap-3 mb-4">
-                  {Icon && (
-                    <div className="p-2 rounded-md bg-primary/8 text-primary">
-                      <Icon size={20} />
-                    </div>
-                  )}
-                  <h2 className="text-xl font-bold text-foreground">
-                    {service.title}
-                  </h2>
-                </div>
-                <Link
-                  href={`/services/${service.slug}`}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline mt-2"
-                >
-                  Learn more
-                  <ArrowRight size={14} />
-                </Link>
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <IconComponent className="h-6 w-6" />
               </div>
-              <div>
-                <p className="text-muted-foreground leading-relaxed">
-                  {service.description}
-                </p>
-                <ul className="mt-5 space-y-1.5">
-                  {service.deliverables.map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-start gap-2 text-sm text-foreground"
-                    >
-                      <span className="mt-1.5 w-1 h-1 rounded-full bg-primary shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+              
+              <h3 className="text-2xl font-semibold leading-tight text-foreground mb-3">
+                {service.title}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed mb-8 flex-1">
+                {service.summary}
+              </p>
+              
+              <div className="mt-auto flex items-center text-sm font-medium text-primary">
+                Explore service <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
-            </article>
+            </Link>
           );
         })}
       </div>

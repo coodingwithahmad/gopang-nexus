@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createPortfolioProjectAction, updatePortfolioProjectAction } from "@/lib/actions/admin-projects";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
@@ -19,6 +20,7 @@ type Project = {
 };
 
 export function PortfolioProjectForm({ initialData }: { initialData?: Project }) {
+  const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,6 +39,8 @@ export function PortfolioProjectForm({ initialData }: { initialData?: Project })
       } else {
         await createPortfolioProjectAction(formData);
       }
+      router.push("/dashboard/admin/projects");
+      router.refresh();
     } catch (err: any) {
       setError(err.message || "An error occurred while saving.");
       setIsPending(false);
