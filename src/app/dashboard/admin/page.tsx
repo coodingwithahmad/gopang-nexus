@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { formatRelative } from "@/lib/utils";
+import Link from "next/link";
 import type { Metadata } from "next";
+import { FolderKanban } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Admin Panel",
@@ -23,9 +25,17 @@ export default async function AdminOverviewPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-foreground tracking-tight">Overview</h2>
-        <p className="text-sm text-muted-foreground mt-1">High-level view of the business.</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground tracking-tight">Overview</h2>
+          <p className="text-sm text-muted-foreground mt-1">High-level view of the business.</p>
+        </div>
+        <Link 
+          href="/dashboard/admin/projects"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-md text-sm font-medium hover:bg-primary/20 transition-colors"
+        >
+          <FolderKanban size={16} /> Manage Projects
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
