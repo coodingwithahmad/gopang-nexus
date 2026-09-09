@@ -108,13 +108,26 @@ export async function replyToTicketAction(
     return { status: "error", message: "You must be signed in." };
   }
 
-  // Verify the ticket belongs to this user
-  const { data: ticket } = await supabase
+  // Get user profile to check role
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  const isAdmin = profile?.role === "admin";
+
+  let query = supabase
     .from("tickets")
     .select("id, status")
-    .eq("id", ticketId)
-    .eq("client_id", user.id)
-    .single();
+    .eq("id", ticketId);
+
+  // If not an admin, ensure the ticket belongs to the user
+  if (!isAdmin) {
+    query = query.eq("client_id", user.id);
+  }
+
+  const { data: ticket } = await query.single();
 
   if (!ticket) {
     return { status: "error", message: "Ticket not found." };
