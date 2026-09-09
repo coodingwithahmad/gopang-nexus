@@ -1,27 +1,27 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { PortfolioProjectForm } from "@/components/forms/PortfolioProjectForm";
+import { BlogForm } from "@/components/forms/BlogForm";
 
-export default function NewAdminProjectPage() {
+export default function NewBlogPage() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <Link
-        href="/dashboard/admin/projects"
+        href="/dashboard/admin/blog"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
       >
         <ArrowLeft size={14} />
-        Back to Public Projects
+        Back to Blog
       </Link>
 
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">Add Public Project</h1>
+        <h1 className="text-2xl font-bold text-foreground">Write New Post</h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          This project will instantly appear on the main website.
+          Create a new article for the insights section.
         </p>
       </div>
 
       <div className="bg-background rounded-xl border border-border shadow-sm p-6">
-        <PortfolioProjectForm />
+        <BlogForm />
       </div>
     </div>
   );

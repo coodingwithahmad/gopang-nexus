@@ -11,15 +11,26 @@ import {
   Settings,
   X,
   Menu,
+  Users,
+  Briefcase,
+  Globe,
+  BookOpen,
+  HelpCircle,
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { label: "Overview", href: "/dashboard", icon: LayoutDashboard, exact: true },
+const adminNavItems = [
+  { label: "Overview", href: "/dashboard/admin", icon: LayoutDashboard, exact: true },
+  { label: "Clients", href: "/dashboard/admin/clients", icon: Users, exact: false },
   { label: "Chats", href: "/dashboard/chats", icon: MessageSquare, exact: false },
-  { label: "Invoices", href: "/dashboard/invoices", icon: FileText, exact: false },
-  { label: "Settings", href: "/dashboard/settings", icon: Settings, exact: false },
+  { label: "Internal Projects", href: "/dashboard/admin/internal-projects", icon: Briefcase, exact: false },
+  { label: "Invoices", href: "/dashboard/admin/invoices", icon: FileText, exact: false },
+  { label: "Public Projects", href: "/dashboard/admin/projects", icon: Globe, exact: false },
+  { label: "Services", href: "/dashboard/admin/services", icon: FolderOpen, exact: false },
+  { label: "Blog & Insights", href: "/dashboard/admin/blog", icon: BookOpen, exact: false },
+  { label: "FAQs", href: "/dashboard/admin/faqs", icon: HelpCircle, exact: false },
+  { label: "Settings", href: "/dashboard/admin/settings", icon: Settings, exact: false },
 ];
 
 interface SidebarProps {
@@ -31,7 +42,7 @@ function NavItem({
   pathname,
   onClick,
 }: {
-  item: (typeof navItems)[0];
+  item: (typeof adminNavItems)[0];
   pathname: string;
   onClick?: () => void;
 }) {
@@ -56,8 +67,8 @@ function NavItem({
   );
 }
 
-// Desktop sidebar — fixed, visible on lg+
-function DesktopSidebar({ role }: SidebarProps) {
+// Desktop sidebar
+function DesktopSidebar() {
   const pathname = usePathname();
 
   return (
@@ -71,30 +82,17 @@ function DesktopSidebar({ role }: SidebarProps) {
           <span className="text-sidebar-primary">.</span>
         </Link>
       </div>
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
-        {navItems.map((item) => (
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+        {adminNavItems.map((item) => (
           <NavItem key={item.href} item={item} pathname={pathname} />
         ))}
       </nav>
-      {role === "admin" && (
-        <div className="px-3 pb-4 border-t border-sidebar-border pt-3">
-          <p className="px-3 text-xs font-medium text-sidebar-foreground/40 uppercase tracking-wider mb-1">
-            Admin
-          </p>
-          <Link
-            href="/dashboard/admin"
-            className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground transition-colors"
-          >
-            Admin Panel
-          </Link>
-        </div>
-      )}
     </aside>
   );
 }
 
-// Mobile sidebar — sheet/drawer
-function MobileSidebar({ role }: SidebarProps) {
+// Mobile sidebar
+function MobileSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -149,7 +147,7 @@ function MobileSidebar({ role }: SidebarProps) {
               </button>
             </div>
             <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-              {navItems.map((item) => (
+              {adminNavItems.map((item) => (
                 <NavItem
                   key={item.href}
                   item={item}
@@ -166,10 +164,13 @@ function MobileSidebar({ role }: SidebarProps) {
 }
 
 export function DashboardSidebar({ role }: SidebarProps) {
+  // Since dashboard is strictly admin now, we only render the admin view.
+  if (role !== "admin") return null;
+
   return (
     <>
-      <DesktopSidebar role={role} />
-      <MobileSidebar role={role} />
+      <DesktopSidebar />
+      <MobileSidebar />
     </>
   );
 }
