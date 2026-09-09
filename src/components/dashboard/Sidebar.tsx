@@ -16,9 +16,12 @@ import {
   Globe,
   BookOpen,
   HelpCircle,
+  LogOut,
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
+import { logoutAction } from "@/lib/actions/auth";
+import { useActionState } from "react";
 
 const adminNavItems = [
   { label: "Overview", href: "/dashboard/admin", icon: LayoutDashboard, exact: true },
@@ -67,9 +70,13 @@ function NavItem({
   );
 }
 
-// Desktop sidebar
+    // Desktop sidebar
 function DesktopSidebar() {
   const pathname = usePathname();
+  const [, logoutFormAction, isPending] = useActionState(
+    async () => { await logoutAction(); },
+    undefined
+  );
 
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-56 lg:shrink-0 bg-sidebar border-r border-sidebar-border min-h-screen">
@@ -87,6 +94,18 @@ function DesktopSidebar() {
           <NavItem key={item.href} item={item} pathname={pathname} />
         ))}
       </nav>
+      <div className="p-4 border-t border-sidebar-border mt-auto">
+        <form action={logoutFormAction}>
+          <button
+            type="submit"
+            disabled={isPending}
+            className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground disabled:opacity-60"
+          >
+            <LogOut size={16} className="shrink-0" />
+            Sign Out
+          </button>
+        </form>
+      </div>
     </aside>
   );
 }
@@ -95,6 +114,10 @@ function DesktopSidebar() {
 function MobileSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [, logoutFormAction, isPending] = useActionState(
+    async () => { await logoutAction(); },
+    undefined
+  );
 
   return (
     <>
@@ -156,6 +179,18 @@ function MobileSidebar() {
                 />
               ))}
             </nav>
+            <div className="p-4 border-t border-sidebar-border mt-auto">
+              <form action={logoutFormAction}>
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground disabled:opacity-60"
+                >
+                  <LogOut size={16} className="shrink-0" />
+                  Sign Out
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       )}

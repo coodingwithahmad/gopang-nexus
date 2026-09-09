@@ -62,10 +62,6 @@ export async function loginAction(
   const next = formData.get("next") as string | null;
   revalidatePath("/", "layout");
   
-  if (next && next.startsWith("/") && next !== "/dashboard") {
-    redirect(next);
-  }
-
   // Get user role to determine redirect
   const { data: profile } = await supabase
     .from("profiles")
@@ -76,6 +72,10 @@ export async function loginAction(
   if (profile?.role === "admin") {
     redirect("/dashboard/admin");
   } else {
+    // For clients, if next is valid, go there, else home
+    if (next && next.startsWith("/") && !next.startsWith("/dashboard")) {
+      redirect(next);
+    }
     redirect("/"); // Clients go to public website
   }
 }
