@@ -19,9 +19,13 @@ const iconMap: Record<string, React.ElementType> = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data: service } = await supabase.from("services").select("*").eq("slug", slug).single();
+  const { data: service, error } = await supabase
+    .from("services")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
 
-  if (!service) {
+  if (error || !service) {
     return { title: "Service Not Found" };
   }
 
@@ -34,9 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data: service } = await supabase.from("services").select("*").eq("slug", slug).single();
+  const { data: service, error } = await supabase
+    .from("services")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
 
-  if (!service) {
+  if (error || !service) {
     notFound();
   }
 
@@ -67,7 +75,9 @@ export default async function ServiceDetailPage({ params }: Props) {
       </div>
 
       <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-primary">
-        <ReactMarkdown>{service.description || "More details coming soon."}</ReactMarkdown>
+        <ReactMarkdown>
+          {service.description || "More details coming soon."}
+        </ReactMarkdown>
       </div>
     </div>
   );

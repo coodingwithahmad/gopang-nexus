@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Services | GOPANG IT SOLUTION",
-  description: "Enterprise-grade software engineering, cloud infrastructure, and technical consulting.",
+  description:
+    "Enterprise-grade software engineering, cloud infrastructure, and technical consulting.",
 };
 
 const iconMap: Record<string, React.ElementType> = {
@@ -19,11 +20,28 @@ export const revalidate = 0; // Always fetch latest
 
 export default async function ServicesPage() {
   const supabase = await createClient();
-  const { data: services } = await supabase
+  const { data: services, error } = await supabase
     .from("services")
     .select("*")
     .eq("published", true)
     .order("sort_order", { ascending: true });
+
+  if (error || !services) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 lg:py-24">
+        <div className="max-w-2xl mb-16">
+          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            Services
+          </h1>
+        </div>
+        <div className="rounded-lg border border-border bg-muted/30 p-12 text-center">
+          <p className="text-muted-foreground">
+            Services are being updated. Please check back soon.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 lg:py-24">
@@ -32,7 +50,9 @@ export default async function ServicesPage() {
           Services
         </h1>
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-          We don't just write code. We build scalable systems, optimize infrastructure, and solve complex business problems through technology.
+          We don't just write code. We build scalable systems, optimize
+          infrastructure, and solve complex business problems through
+          technology.
         </p>
       </div>
 
@@ -48,16 +68,17 @@ export default async function ServicesPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                 <IconComponent className="h-6 w-6" />
               </div>
-              
+
               <h3 className="text-2xl font-semibold leading-tight text-foreground mb-3">
                 {service.title}
               </h3>
               <p className="text-muted-foreground leading-relaxed mb-8 flex-1">
                 {service.summary}
               </p>
-              
+
               <div className="mt-auto flex items-center text-sm font-medium text-primary">
-                Explore service <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                Explore service{" "}
+                <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
             </Link>
           );
@@ -68,7 +89,10 @@ export default async function ServicesPage() {
       <div className="mt-16 pt-10 border-t border-border">
         <p className="text-muted-foreground">
           Not sure which service applies to your situation?{" "}
-          <Link href="/contact" className="text-primary hover:underline font-medium">
+          <Link
+            href="/contact"
+            className="text-primary hover:underline font-medium"
+          >
             Send us a message
           </Link>{" "}
           and we&apos;ll figure it out together.

@@ -12,9 +12,13 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data: post } = await supabase.from("blog_posts").select("*").eq("slug", slug).single();
+  const { data: post, error } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
 
-  if (!post) {
+  if (error || !post) {
     return { title: "Post Not Found" };
   }
 
@@ -27,9 +31,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function InsightDetailPage({ params }: Props) {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data: post } = await supabase.from("blog_posts").select("*").eq("slug", slug).single();
+  const { data: post, error } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
 
-  if (!post) {
+  if (error || !post) {
     notFound();
   }
 
@@ -47,8 +55,13 @@ export default async function InsightDetailPage({ params }: Props) {
 
       <div className="mb-12">
         <div className="flex items-center gap-x-4 text-sm mb-6">
-          <time dateTime={post.published_at || ""} className="text-muted-foreground">
-            {post.published_at ? new Date(post.published_at).toLocaleDateString() : "Draft"}
+          <time
+            dateTime={post.published_at || ""}
+            className="text-muted-foreground"
+          >
+            {post.published_at
+              ? new Date(post.published_at).toLocaleDateString()
+              : "Draft"}
           </time>
           <span className="relative z-10 rounded-full bg-muted px-3 py-1.5 font-medium text-foreground">
             Blog

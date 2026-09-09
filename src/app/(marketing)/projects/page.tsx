@@ -12,11 +12,28 @@ export const revalidate = 0; // Always fetch latest projects
 
 export default async function ProjectsPage() {
   const supabase = await createClient();
-  const { data: portfolioProjects } = await supabase
+  const { data: portfolioProjects, error } = await supabase
     .from("portfolio_projects")
     .select("*")
     .eq("published", true)
     .order("sort_order", { ascending: true });
+
+  if (error || !portfolioProjects) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 lg:py-16">
+        <div className="max-w-2xl mb-12 lg:mb-16">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            Projects
+          </h1>
+        </div>
+        <div className="space-y-px border border-border rounded-lg overflow-hidden">
+          <div className="p-8 text-center text-muted-foreground">
+            More projects coming soon.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 lg:py-16">
@@ -31,7 +48,7 @@ export default async function ProjectsPage() {
       </div>
 
       <div className="space-y-px border border-border rounded-lg overflow-hidden">
-        {(!portfolioProjects || portfolioProjects.length === 0) ? (
+        {!portfolioProjects || portfolioProjects.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">
             More projects coming soon.
           </div>
@@ -70,7 +87,10 @@ export default async function ProjectsPage() {
       <div className="mt-12 pt-8 border-t border-border">
         <p className="text-muted-foreground text-sm">
           Have a project similar to one of these?{" "}
-          <Link href="/contact" className="text-primary hover:underline font-medium">
+          <Link
+            href="/contact"
+            className="text-primary hover:underline font-medium"
+          >
             Let&apos;s talk.
           </Link>
         </p>

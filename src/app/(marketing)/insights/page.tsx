@@ -5,18 +5,36 @@ import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Insights | GOPANG IT SOLUTION",
-  description: "Read our latest thoughts on software engineering, business tools, and technology.",
+  description:
+    "Read our latest thoughts on software engineering, business tools, and technology.",
 };
 
 export const revalidate = 0; // Always fetch latest insights
 
 export default async function InsightsPage() {
   const supabase = await createClient();
-  const { data: posts } = await supabase
+  const { data: posts, error } = await supabase
     .from("blog_posts")
     .select("*")
     .eq("published", true)
     .order("published_at", { ascending: false });
+
+  if (error || !posts) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 lg:py-24">
+        <div className="max-w-2xl mb-16">
+          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            Insights
+          </h1>
+        </div>
+        <div className="rounded-lg border border-border bg-muted/30 p-12 text-center">
+          <p className="text-muted-foreground">
+            We&apos;re writing about our work. Check back soon for updates.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 lg:py-24">
@@ -25,7 +43,8 @@ export default async function InsightsPage() {
           Insights
         </h1>
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-          Technical breakdowns, engineering strategies, and thoughts on building software that solves actual business problems.
+          Technical breakdowns, engineering strategies, and thoughts on building
+          software that solves actual business problems.
         </p>
       </div>
 
@@ -38,19 +57,24 @@ export default async function InsightsPage() {
       ) : (
         <div className="grid gap-8 lg:grid-cols-2">
           {posts.map((post) => (
-            <article 
-              key={post.id} 
+            <article
+              key={post.id}
               className="group relative flex flex-col items-start justify-between rounded-2xl border border-border bg-background p-6 sm:p-8 shadow-sm transition-all hover:shadow-md hover:border-primary/20"
             >
               <div className="flex items-center gap-x-4 text-xs">
-                <time dateTime={post.published_at || ""} className="text-muted-foreground">
-                  {post.published_at ? new Date(post.published_at).toLocaleDateString() : "Draft"}
+                <time
+                  dateTime={post.published_at || ""}
+                  className="text-muted-foreground"
+                >
+                  {post.published_at
+                    ? new Date(post.published_at).toLocaleDateString()
+                    : "Draft"}
                 </time>
                 <span className="relative z-10 rounded-full bg-muted px-3 py-1.5 font-medium text-foreground">
                   Blog
                 </span>
               </div>
-              
+
               <div className="group relative mt-6">
                 <h3 className="text-xl font-semibold leading-tight text-foreground group-hover:text-primary transition-colors">
                   <Link href={`/insights/${post.slug}`}>
@@ -62,9 +86,10 @@ export default async function InsightsPage() {
                   {post.excerpt}
                 </p>
               </div>
-              
+
               <div className="mt-8 flex items-center text-sm font-medium text-primary">
-                Read full article <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                Read full article{" "}
+                <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
             </article>
           ))}

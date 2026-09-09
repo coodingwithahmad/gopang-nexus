@@ -13,9 +13,13 @@ export const revalidate = 0;
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data: project } = await supabase.from("portfolio_projects").select("title, summary").eq("slug", slug).single();
+  const { data: project, error } = await supabase
+    .from("portfolio_projects")
+    .select("title, summary")
+    .eq("slug", slug)
+    .maybeSingle();
 
-  if (!project) return { title: "Not Found" };
+  if (error || !project) return { title: "Not Found" };
 
   return {
     title: project.title,
@@ -26,9 +30,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProjectDetailPage({ params }: Props) {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data: project } = await supabase.from("portfolio_projects").select("*").eq("slug", slug).single();
+  const { data: project, error } = await supabase
+    .from("portfolio_projects")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
 
-  if (!project) notFound();
+  if (error || !project) notFound();
 
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-12 lg:py-16">
@@ -71,7 +79,9 @@ export default async function ProjectDetailPage({ params }: Props) {
         </div>
 
         <div className="mt-12 pt-8 border-t border-border">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Ready to start your project?</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">
+            Ready to start your project?
+          </h2>
           <Link
             href="/contact"
             className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
