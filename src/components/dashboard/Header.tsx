@@ -1,6 +1,5 @@
 "use client";
 
-import { useActionState } from "react";
 import { Bell, LogOut } from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth";
 import { getInitials } from "@/lib/utils";
@@ -11,11 +10,6 @@ interface HeaderProps {
 }
 
 export function DashboardHeader({ profile }: HeaderProps) {
-  const [, logoutFormAction, isPending] = useActionState(
-    async () => { await logoutAction(); },
-    undefined
-  );
-
   const displayName = profile.full_name ?? profile.email;
   const initials = getInitials(displayName);
 
@@ -43,11 +37,10 @@ export function DashboardHeader({ profile }: HeaderProps) {
       </div>
 
       {/* Logout */}
-      <form action={logoutFormAction}>
+      <form action={logoutAction}>
         <button
           type="submit"
-          disabled={isPending}
-          className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-60 transition-colors"
+          className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           aria-label="Sign out"
         >
           <LogOut size={16} />

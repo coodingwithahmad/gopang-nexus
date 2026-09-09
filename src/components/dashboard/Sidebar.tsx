@@ -21,19 +21,68 @@ import {
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/lib/actions/auth";
-import { useActionState } from "react";
 
 const adminNavItems = [
-  { label: "Overview", href: "/dashboard/admin", icon: LayoutDashboard, exact: true },
-  { label: "Clients", href: "/dashboard/admin/clients", icon: Users, exact: false },
-  { label: "Chats", href: "/dashboard/chats", icon: MessageSquare, exact: false },
-  { label: "Internal Projects", href: "/dashboard/admin/internal-projects", icon: Briefcase, exact: false },
-  { label: "Invoices", href: "/dashboard/admin/invoices", icon: FileText, exact: false },
-  { label: "Public Projects", href: "/dashboard/admin/projects", icon: Globe, exact: false },
-  { label: "Services", href: "/dashboard/admin/services", icon: FolderOpen, exact: false },
-  { label: "Blog & Insights", href: "/dashboard/admin/blog", icon: BookOpen, exact: false },
-  { label: "FAQs", href: "/dashboard/admin/faqs", icon: HelpCircle, exact: false },
-  { label: "Settings", href: "/dashboard/admin/settings", icon: Settings, exact: false },
+  {
+    label: "Overview",
+    href: "/dashboard/admin",
+    icon: LayoutDashboard,
+    exact: true,
+  },
+  {
+    label: "Clients",
+    href: "/dashboard/admin/clients",
+    icon: Users,
+    exact: false,
+  },
+  {
+    label: "Chats",
+    href: "/dashboard/chats",
+    icon: MessageSquare,
+    exact: false,
+  },
+  {
+    label: "Internal Projects",
+    href: "/dashboard/admin/internal-projects",
+    icon: Briefcase,
+    exact: false,
+  },
+  {
+    label: "Invoices",
+    href: "/dashboard/admin/invoices",
+    icon: FileText,
+    exact: false,
+  },
+  {
+    label: "Public Projects",
+    href: "/dashboard/admin/projects",
+    icon: Globe,
+    exact: false,
+  },
+  {
+    label: "Services",
+    href: "/dashboard/admin/services",
+    icon: FolderOpen,
+    exact: false,
+  },
+  {
+    label: "Blog & Insights",
+    href: "/dashboard/admin/blog",
+    icon: BookOpen,
+    exact: false,
+  },
+  {
+    label: "FAQs",
+    href: "/dashboard/admin/faqs",
+    icon: HelpCircle,
+    exact: false,
+  },
+  {
+    label: "Settings",
+    href: "/dashboard/admin/settings",
+    icon: Settings,
+    exact: false,
+  },
 ];
 
 interface SidebarProps {
@@ -61,7 +110,7 @@ function NavItem({
         "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
         isActive
           ? "bg-sidebar-accent text-sidebar-accent-foreground"
-          : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+          : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
       )}
     >
       <item.icon size={16} className="shrink-0" />
@@ -70,13 +119,9 @@ function NavItem({
   );
 }
 
-    // Desktop sidebar
+// Desktop sidebar
 function DesktopSidebar() {
   const pathname = usePathname();
-  const [, logoutFormAction, isPending] = useActionState(
-    async () => { await logoutAction(); },
-    undefined
-  );
 
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-56 lg:shrink-0 bg-sidebar border-r border-sidebar-border min-h-screen">
@@ -95,11 +140,10 @@ function DesktopSidebar() {
         ))}
       </nav>
       <div className="p-4 border-t border-sidebar-border mt-auto">
-        <form action={logoutFormAction}>
+        <form action={logoutAction}>
           <button
             type="submit"
-            disabled={isPending}
-            className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground disabled:opacity-60"
+            className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
           >
             <LogOut size={16} className="shrink-0" />
             Sign Out
@@ -114,10 +158,6 @@ function DesktopSidebar() {
 function MobileSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [, logoutFormAction, isPending] = useActionState(
-    async () => { await logoutAction(); },
-    undefined
-  );
 
   return (
     <>
@@ -180,11 +220,10 @@ function MobileSidebar() {
               ))}
             </nav>
             <div className="p-4 border-t border-sidebar-border mt-auto">
-              <form action={logoutFormAction}>
+              <form action={logoutAction}>
                 <button
                   type="submit"
-                  disabled={isPending}
-                  className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground disabled:opacity-60"
+                  className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
                 >
                   <LogOut size={16} className="shrink-0" />
                   Sign Out
