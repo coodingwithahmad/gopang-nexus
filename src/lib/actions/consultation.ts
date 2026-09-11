@@ -56,10 +56,6 @@ export async function submitConsultation(
   const emailFrom = process.env.CONTACT_EMAIL_FROM;
 
   if (!emailTo || !emailFrom) {
-    if (process.env.NODE_ENV === "development") {
-      console.log("[Consultation] Email not configured — submission logged only");
-      return { status: "success" };
-    }
     return {
       status: "error",
       message: "Email is not configured. Please contact us directly.",

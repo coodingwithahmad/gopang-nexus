@@ -38,12 +38,6 @@ export async function submitContact(
   const emailFrom = process.env.CONTACT_EMAIL_FROM;
 
   if (!emailTo || !emailFrom) {
-    // In development without Resend configured, log and succeed silently
-    if (process.env.NODE_ENV === "development") {
-      console.log("[Contact form] Email not configured — message logged only:");
-      console.log({ name, email, subject });
-      return { status: "success" };
-    }
     return {
       status: "error",
       message: "Email is not configured. Please contact us directly.",
