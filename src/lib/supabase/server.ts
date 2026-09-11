@@ -2,6 +2,13 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "@/types/database";
 
+export function isSupabaseConfigured() {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+}
+
 /**
  * Creates a Supabase client for Server Components, Server Actions, and Route Handlers.
  *
@@ -10,6 +17,10 @@ import type { Database } from "@/types/database";
  * getUser() makes a network request to Supabase and is authoritative.
  */
 export async function createClient() {
+  if (!isSupabaseConfigured()) {
+    throw new Error("Supabase environment variables are not configured.");
+  }
+
   const cookieStore = await cookies();
 
   return createServerClient<Database>(

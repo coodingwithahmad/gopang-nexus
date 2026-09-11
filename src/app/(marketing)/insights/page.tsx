@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Insights | GOPANG IT SOLUTION",
@@ -12,12 +12,20 @@ export const metadata: Metadata = {
 export const revalidate = 0; // Always fetch latest insights
 
 export default async function InsightsPage() {
-  const supabase = await createClient();
-  const { data: posts, error } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .eq("published", true)
-    .order("published_at", { ascending: false });
+  let posts = null;
+  let error = null;
+
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const result = await supabase
+      .from("blog_posts")
+      .select("*")
+      .eq("published", true)
+      .order("published_at", { ascending: false });
+
+    posts = result.data;
+    error = result.error;
+  }
 
   if (error || !posts) {
     return (
@@ -51,7 +59,7 @@ export default async function InsightsPage() {
       {!posts || posts.length === 0 ? (
         <div className="rounded-lg border border-border bg-muted/30 p-12 text-center">
           <p className="text-muted-foreground">
-            We're writing about our work. Check back soon for updates.
+            We&apos;re writing about our work. Check back soon for updates.
           </p>
         </div>
       ) : (

@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
+import { getProjectBySlug } from "@/lib/data/portfolio";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -12,6 +13,13 @@ export const revalidate = 0;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  if (!isSupabaseConfigured()) {
+    const project = getProjectBySlug(slug);
+    return project
+      ? { title: project.title, description: project.summary }
+      : { title: "Not Found" };
+  }
+
   const supabase = await createClient();
   const { data: project, error } = await supabase
     .from("portfolio_projects")
@@ -29,12 +37,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProjectDetailPage({ params }: Props) {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data: project, error } = await supabase
-    .from("portfolio_projects")
-    .select("*")
-    .eq("slug", slug)
-    .maybeSingle();
+  let project: {
+    title: string;
+    summary: string;
+    description: string;
+    tags?: unknown;
+    image_path?: string | null;
+  } | null = getProjectBySlug(slug) || null;
+  let error = null;
+
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const result = await supabase
+      .from("portfolio_projects")
+      .select("*")
+      .eq("slug", slug)
+      .eq("published", true)
+      .maybeSingle();
+
+    project = result.data || project;
+    error = result.error;
+  }
 
   if (error || !project) notFound();
 
@@ -54,12 +77,12 @@ export default async function ProjectDetailPage({ params }: Props) {
             {project.title}
           </h1>
           <div className="flex flex-wrap gap-2 mb-6">
-            {project.tags.map((tag: string) => (
+            {(Array.isArray(project.tags) ? project.tags : []).map((tag) => (
               <span
-                key={tag}
+                key={String(tag)}
                 className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-secondary text-secondary-foreground"
               >
-                {tag}
+                {String(tag)}
               </span>
             ))}
           </div>

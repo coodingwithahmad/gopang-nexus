@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { portfolioProjects as fallbackProjects } from "@/lib/data/portfolio";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -11,14 +12,25 @@ export const metadata: Metadata = {
 export const revalidate = 0; // Always fetch latest projects
 
 export default async function ProjectsPage() {
-  const supabase = await createClient();
-  const { data: portfolioProjects, error } = await supabase
-    .from("portfolio_projects")
-    .select("*")
-    .eq("published", true)
-    .order("sort_order", { ascending: true });
+  let portfolioProjects: Array<{
+    slug: string;
+    title: string;
+    summary: string;
+    tags?: unknown;
+  }> = fallbackProjects;
 
-  if (error || !portfolioProjects) {
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const result = await supabase
+      .from("portfolio_projects")
+      .select("slug, title, summary, tags")
+      .eq("published", true)
+      .order("sort_order", { ascending: true });
+
+    portfolioProjects = result.data?.length ? result.data : fallbackProjects;
+  }
+
+  if (!portfolioProjects) {
     return (
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 lg:py-16">
         <div className="max-w-2xl mb-12 lg:mb-16">
@@ -69,14 +81,16 @@ export default async function ProjectsPage() {
                   {project.summary}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
-                  {project.tags.map((tag: string) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                  {(Array.isArray(project.tags) ? project.tags : []).map(
+                    (tag) => (
+                      <span
+                        key={String(tag)}
+                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground"
+                      >
+                        {String(tag)}
+                      </span>
+                    ),
+                  )}
                 </div>
               </div>
             </Link>

@@ -1,7 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Code, Laptop, Shield, Cloud } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
+import {
+  ArrowRight,
+  Code,
+  Laptop,
+  Shield,
+  Cloud,
+  Globe,
+  LayoutDashboard,
+  MessageSquare,
+  Wrench,
+} from "lucide-react";
+import { services as fallbackServices } from "@/lib/data/services";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Services | GOPANG IT SOLUTION",
@@ -14,19 +25,36 @@ const iconMap: Record<string, React.ElementType> = {
   Laptop,
   Shield,
   Cloud,
+  Globe,
+  LayoutDashboard,
+  MessageSquare,
+  Wrench,
 };
 
 export const revalidate = 0; // Always fetch latest
 
 export default async function ServicesPage() {
-  const supabase = await createClient();
-  const { data: services, error } = await supabase
-    .from("services")
-    .select("*")
-    .eq("published", true)
-    .order("sort_order", { ascending: true });
+  let services: Array<{
+    id?: string;
+    slug: string;
+    title: string;
+    summary: string;
+    icon_name?: string;
+    iconName?: string;
+  }> = fallbackServices;
 
-  if (error || !services) {
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const result = await supabase
+      .from("services")
+      .select("id, slug, title, summary, icon_name")
+      .eq("published", true)
+      .order("sort_order", { ascending: true });
+
+    services = result.data?.length ? result.data : fallbackServices;
+  }
+
+  if (!services) {
     return (
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 lg:py-24">
         <div className="max-w-2xl mb-16">
@@ -50,7 +78,7 @@ export default async function ServicesPage() {
           Services
         </h1>
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-          We don't just write code. We build scalable systems, optimize
+          We don&apos;t just write code. We build scalable systems, optimize
           infrastructure, and solve complex business problems through
           technology.
         </p>
@@ -58,10 +86,11 @@ export default async function ServicesPage() {
 
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-2">
         {services?.map((service) => {
-          const IconComponent = iconMap[service.icon_name] || Code;
+          const IconComponent =
+            iconMap[service.icon_name || service.iconName || ""] || Code;
           return (
             <Link
-              key={service.id}
+              key={service.id || service.slug}
               href={`/services/${service.slug}`}
               className="group relative flex flex-col items-start justify-between rounded-2xl border border-border bg-background p-8 shadow-sm transition-all hover:shadow-md hover:border-primary/30"
             >

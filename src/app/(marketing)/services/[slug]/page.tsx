@@ -1,6 +1,17 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { ArrowLeft, Code, Laptop, Shield, Cloud } from "lucide-react";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { getServiceBySlug } from "@/lib/data/services";
+import {
+  ArrowLeft,
+  Code,
+  Laptop,
+  Shield,
+  Cloud,
+  Globe,
+  LayoutDashboard,
+  MessageSquare,
+  Wrench,
+} from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import type { Metadata } from "next";
@@ -14,10 +25,24 @@ const iconMap: Record<string, React.ElementType> = {
   Laptop,
   Shield,
   Cloud,
+  Globe,
+  LayoutDashboard,
+  MessageSquare,
+  Wrench,
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  if (!isSupabaseConfigured()) {
+    const service = getServiceBySlug(slug);
+    return service
+      ? {
+          title: `${service.title} | GOPANG IT SOLUTION`,
+          description: service.summary,
+        }
+      : { title: "Service Not Found" };
+  }
+
   const supabase = await createClient();
   const { data: service, error } = await supabase
     .from("services")
@@ -37,18 +62,42 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data: service, error } = await supabase
-    .from("services")
-    .select("*")
-    .eq("slug", slug)
-    .maybeSingle();
+  const fallbackService = getServiceBySlug(slug);
+  let service: {
+    title: string;
+    summary: string;
+    description: string;
+    icon_name?: string;
+    iconName?: string;
+  } | null = fallbackService
+    ? {
+        title: fallbackService.title,
+        summary: fallbackService.summary,
+        description: fallbackService.description,
+        iconName: fallbackService.iconName,
+      }
+    : null;
+  let error = null;
+
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const result = await supabase
+      .from("services")
+      .select("*")
+      .eq("slug", slug)
+      .eq("published", true)
+      .maybeSingle();
+
+    service = result.data || service;
+    error = result.error;
+  }
 
   if (error || !service) {
     notFound();
   }
 
-  const IconComponent = iconMap[service.icon_name] || Code;
+  const IconComponent =
+    iconMap[service.icon_name || service.iconName || ""] || Code;
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-16 lg:py-24">

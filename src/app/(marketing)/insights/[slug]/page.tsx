@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
@@ -11,6 +11,10 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  if (!isSupabaseConfigured()) {
+    return { title: "Post Not Found" };
+  }
+
   const supabase = await createClient();
   const { data: post, error } = await supabase
     .from("blog_posts")
@@ -30,11 +34,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function InsightDetailPage({ params }: Props) {
   const { slug } = await params;
+  if (!isSupabaseConfigured()) {
+    notFound();
+  }
+
   const supabase = await createClient();
   const { data: post, error } = await supabase
     .from("blog_posts")
     .select("*")
     .eq("slug", slug)
+    .eq("published", true)
     .maybeSingle();
 
   if (error || !post) {
