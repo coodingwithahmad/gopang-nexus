@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   Bell,
   ChevronDown,
+  KeyRound,
   LogOut,
   Settings,
   ShieldCheck,
@@ -70,40 +71,46 @@ export function DashboardHeader({ profile }: HeaderProps) {
         </button>
 
         {open && (
-          <div className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-popover text-popover-foreground shadow-lg z-50">
-            <div className="p-4">
-              <div className="flex items-start gap-3">
-                <div className="w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold shrink-0">
+          <div className="absolute right-0 top-full mt-2 w-[28rem] max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl z-50">
+            <div className="p-3">
+              <div className="rounded-lg bg-muted/70 px-5 py-8 text-center">
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary text-3xl font-semibold text-primary-foreground">
                   {initials}
                 </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground truncate">
-                    {displayName}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {profile.email}
-                  </p>
-                  <span className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
-                    <ShieldCheck size={12} />
-                    {profile.role === "admin" ? "Administrator" : "Client"}
-                  </span>
-                </div>
+                <p className="mt-4 truncate text-base font-semibold text-foreground">
+                  {displayName}
+                </p>
+                <p className="mt-1 truncate text-sm text-muted-foreground">
+                  {profile.email}
+                </p>
+                <span className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-background px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-primary shadow-sm">
+                  <ShieldCheck size={12} />
+                  {profile.role === "admin" ? "Administrator" : "Client"}
+                </span>
               </div>
             </div>
 
-            <div className="border-t border-border p-2">
+            <div className="px-3 pb-3 pt-1">
               <Link
                 href="/dashboard/settings"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
+                className="flex items-center gap-4 rounded-md px-4 py-3 text-sm text-foreground transition-colors hover:bg-muted"
               >
-                <Settings size={16} />
+                <Settings size={18} className="text-muted-foreground" />
                 Account settings
               </Link>
-              <div className="flex items-center justify-between rounded-md px-3 py-2">
-                <span className="flex items-center gap-2 text-sm text-foreground">
-                  <UserRound size={16} />
-                  Theme
+              <Link
+                href="/dashboard/settings"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-4 rounded-md px-4 py-3 text-sm text-foreground transition-colors hover:bg-muted"
+              >
+                <KeyRound size={18} className="text-muted-foreground" />
+                Password and profile
+              </Link>
+              <div className="flex items-center justify-between rounded-md px-4 py-3">
+                <span className="flex items-center gap-4 text-sm text-foreground">
+                  <UserRound size={18} className="text-muted-foreground" />
+                  Dark / light mode
                 </span>
                 <ThemeToggle />
               </div>
@@ -113,9 +120,9 @@ export function DashboardHeader({ profile }: HeaderProps) {
               <form action={logoutAction}>
                 <button
                   type="submit"
-                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="flex w-full items-center gap-4 rounded-md px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
-                  <LogOut size={16} />
+                  <LogOut size={18} />
                   Sign out
                 </button>
               </form>
