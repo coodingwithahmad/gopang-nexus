@@ -1,135 +1,23 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import {
-  Bell,
-  ChevronDown,
-  KeyRound,
-  LogOut,
-  Settings,
-  ShieldCheck,
-  UserRound,
-} from "lucide-react";
-import { logoutAction } from "@/lib/actions/auth";
-import { getInitials } from "@/lib/utils";
+import { Bell } from "lucide-react";
 import type { Profile } from "@/types/database";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { AccountMenu } from "@/components/account/AccountMenu";
 
 interface HeaderProps {
   profile: Pick<Profile, "full_name" | "email" | "role" | "avatar_url">;
 }
 
 export function DashboardHeader({ profile }: HeaderProps) {
-  const displayName = profile.full_name ?? profile.email;
-  const initials = getInitials(displayName);
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function onPointerDown(event: PointerEvent) {
-      if (!menuRef.current?.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    }
-
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, []);
-
   return (
     <header className="h-14 lg:h-12 flex items-center justify-end gap-3 px-4 sm:px-6 border-b border-border bg-background shrink-0 lg:mt-0 mt-14">
       <button
-        className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+        className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground shadow-sm transition-colors hover:bg-muted hover:text-foreground"
         aria-label="Notifications"
       >
-        <Bell size={16} />
+        <Bell size={18} />
       </button>
-
-      <div className="relative" ref={menuRef}>
-        <button
-          type="button"
-          onClick={() => setOpen((current) => !current)}
-          className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-left shadow-sm transition-colors hover:bg-muted"
-          aria-label="Open account menu"
-          aria-expanded={open}
-        >
-          <span
-            className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold shrink-0"
-            aria-hidden="true"
-          >
-            {initials}
-          </span>
-          <span className="hidden sm:block text-sm text-foreground font-medium truncate max-w-40">
-            {displayName}
-          </span>
-          <ChevronDown
-            size={14}
-            className={`text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
-            aria-hidden="true"
-          />
-        </button>
-
-        {open && (
-          <div className="absolute right-0 top-full mt-2 w-[28rem] max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl z-50">
-            <div className="p-3">
-              <div className="rounded-lg bg-muted/70 px-5 py-8 text-center">
-                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary text-3xl font-semibold text-primary-foreground">
-                  {initials}
-                </div>
-                <p className="mt-4 truncate text-base font-semibold text-foreground">
-                  {displayName}
-                </p>
-                <p className="mt-1 truncate text-sm text-muted-foreground">
-                  {profile.email}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-background px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-primary shadow-sm">
-                  <ShieldCheck size={12} />
-                  {profile.role === "admin" ? "Administrator" : "Client"}
-                </span>
-              </div>
-            </div>
-
-            <div className="px-3 pb-3 pt-1">
-              <Link
-                href="/dashboard/settings"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-4 rounded-md px-4 py-3 text-sm text-foreground transition-colors hover:bg-muted"
-              >
-                <Settings size={18} className="text-muted-foreground" />
-                Account settings
-              </Link>
-              <Link
-                href="/dashboard/settings"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-4 rounded-md px-4 py-3 text-sm text-foreground transition-colors hover:bg-muted"
-              >
-                <KeyRound size={18} className="text-muted-foreground" />
-                Password and profile
-              </Link>
-              <div className="flex items-center justify-between rounded-md px-4 py-3">
-                <span className="flex items-center gap-4 text-sm text-foreground">
-                  <UserRound size={18} className="text-muted-foreground" />
-                  Dark / light mode
-                </span>
-                <ThemeToggle />
-              </div>
-            </div>
-
-            <div className="border-t border-border p-2">
-              <form action={logoutAction}>
-                <button
-                  type="submit"
-                  className="flex w-full items-center gap-4 rounded-md px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  <LogOut size={18} />
-                  Sign out
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
-      </div>
+      <AccountMenu profile={profile} showDashboardLink />
     </header>
   );
 }

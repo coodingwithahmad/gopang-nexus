@@ -3,18 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { LayoutDashboard, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { marketingNav } from "@/config/nav";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import {
+  AccountMenu,
+  type AccountMenuProfile,
+} from "@/components/account/AccountMenu";
 
 export function Nav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [role, setRole] = useState<"client" | "admin" | null>(null);
+  const [profile, setProfile] = useState<AccountMenuProfile | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -24,18 +28,31 @@ export function Nav() {
       if (!mounted) return;
 
       if (!nextUser) {
-        setRole(null);
+        setProfile(null);
         return;
       }
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("role")
+        .select("full_name, email, role, avatar_url")
         .eq("id", nextUser.id)
-        .single();
+        .maybeSingle();
 
       if (mounted) {
-        setRole(profile?.role ?? null);
+        setProfile({
+          full_name:
+            profile?.full_name ??
+            (typeof nextUser.user_metadata?.full_name === "string"
+              ? nextUser.user_metadata.full_name
+              : null),
+          email: profile?.email ?? nextUser.email ?? "no-email@example.com",
+          role: profile?.role === "admin" ? "admin" : "client",
+          avatar_url:
+            profile?.avatar_url ??
+            (typeof nextUser.user_metadata?.avatar_url === "string"
+              ? nextUser.user_metadata.avatar_url
+              : null),
+        });
       }
     }
 
@@ -54,8 +71,6 @@ export function Nav() {
       subscription.unsubscribe();
     };
   }, []);
-
-  const isAdmin = role === "admin";
 
   return (
     <header className="sticky top-0 z-40 bg-background border-b border-border">
@@ -92,26 +107,22 @@ export function Nav() {
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-2">
           <ThemeToggle />
-          {isAdmin && (
+          {profile ? (
+            <AccountMenu profile={profile} showDashboardLink />
+          ) : (
             <Link
-              href="/dashboard/admin"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors"
+              href="/login"
+              className="inline-flex items-center px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
-              <LayoutDashboard size={14} />
-              Admin Panel
+              Sign in
             </Link>
           )}
-          <Link
-            href="/login"
-            className="inline-flex items-center px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-          >
-            Sign in
-          </Link>
         </div>
 
         {/* Mobile menu toggle */}
         <div className="ml-auto flex items-center gap-2 md:hidden">
           <ThemeToggle />
+          {profile && <AccountMenu profile={profile} showDashboardLink />}
           <button
             className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             onClick={() => setMobileOpen((prev) => !prev)}
@@ -150,23 +161,15 @@ export function Nav() {
             ))}
           </ul>
           <div className="px-4 pb-4 pt-1 flex flex-col gap-2">
-            {isAdmin && (
+            {!profile && (
               <Link
-                href="/dashboard/admin"
+                href="/login"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                className="block text-center px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
               >
-                <LayoutDashboard size={14} />
-                Admin Panel
+                Sign in
               </Link>
             )}
-            <Link
-              href="/login"
-              onClick={() => setMobileOpen(false)}
-              className="block text-center px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-            >
-              Sign in
-            </Link>
           </div>
         </div>
       )}

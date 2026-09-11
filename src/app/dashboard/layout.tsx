@@ -34,11 +34,6 @@ export default async function DashboardLayout({
     avatar_url: null,
   };
 
-  // Completely block clients from accessing the dashboard routes
-  if (safeProfile.role === "client") {
-    redirect("/");
-  }
-
   return (
     <div className="min-h-screen flex bg-muted/30">
       <DashboardSidebar role={safeProfile.role} />
