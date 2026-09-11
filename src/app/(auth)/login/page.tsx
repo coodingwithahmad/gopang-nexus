@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useActionState, Suspense } from "react";
 import { loginAction, type AuthActionState } from "@/lib/actions/auth";
+import { OAuthButtons } from "@/components/auth/OAuthButtons";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { siteConfig } from "@/config/site";
@@ -13,66 +14,82 @@ const initialState: AuthActionState = { status: "idle" };
 function LoginForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "";
+  const error = searchParams.get("error");
 
   const [state, formAction, isPending] = useActionState(loginAction, initialState);
 
   return (
-    <form action={formAction} className="space-y-4" noValidate>
-      <input type="hidden" name="next" value={next} />
+    <div className="space-y-5">
+      <OAuthButtons next={next || "/dashboard"} />
 
-      <div className="space-y-1.5">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          placeholder="you@example.com"
-          required
-        />
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-border" />
+        <span className="text-xs text-muted-foreground">or use email</span>
+        <div className="h-px flex-1 bg-border" />
       </div>
 
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="password">Password</Label>
-          <Link
-            href="/forgot-password"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Forgot password?
-          </Link>
-        </div>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          placeholder="••••••••"
-          required
-        />
-      </div>
-
-      {state.status === "error" && (
+      {error && (
         <p className="text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-md px-3 py-2">
-          {state.message}
+          We could not complete that sign-in. Please try again or use email.
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-      >
-        {isPending ? "Signing in..." : "Sign in"}
-      </button>
-    </form>
+      <form action={formAction} className="space-y-4" noValidate>
+        <input type="hidden" name="next" value={next} />
+
+        <div className="space-y-1.5">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            required
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
+            <Link
+              href="/forgot-password"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            placeholder="********"
+            required
+          />
+        </div>
+
+        {state.status === "error" && (
+          <p className="text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-md px-3 py-2">
+            {state.message}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={isPending}
+          className="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+        >
+          {isPending ? "Signing in..." : "Sign in"}
+        </button>
+      </form>
+    </div>
   );
 }
 
 export default function LoginPage() {
   return (
     <div className="w-full max-w-sm">
-      {/* Logo */}
       <div className="mb-8 text-center">
         <Link
           href="/"
@@ -87,9 +104,8 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* Form card */}
       <div className="bg-background border border-border rounded-lg p-6 shadow-sm">
-        <Suspense fallback={<div className="h-[250px] flex items-center justify-center text-sm text-muted-foreground">Loading...</div>}>
+        <Suspense fallback={<div className="h-[330px] flex items-center justify-center text-sm text-muted-foreground">Loading...</div>}>
           <LoginForm />
         </Suspense>
       </div>
