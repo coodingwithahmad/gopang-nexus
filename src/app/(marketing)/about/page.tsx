@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "GOPANG IT SOLUTION builds websites, business applications, and internal tools for companies that need software they can actually use.",
+    "GOPANG IT SOLUTION builds practical websites, business applications, and internal systems for growing companies.",
 };
 
 export default function AboutPage() {
@@ -18,54 +18,52 @@ export default function AboutPage() {
 
           <div className="mt-8 space-y-5 text-muted-foreground leading-relaxed">
             <p>
-              GOPANG IT SOLUTION is an IT services company focused on building
-              software that solves real business problems — websites, internal
-              tools, client portals, and business applications for companies
-              that need something specific.
+              GOPANG IT SOLUTION is an IT services company for businesses that
+              need practical software, not complicated technology for its own
+              sake. We build websites, business applications, client portals,
+              and internal tools that solve clear operational problems.
             </p>
             <p>
-              We work with businesses in a range of industries. The work varies:
-              sometimes it&apos;s a company website, sometimes it&apos;s a
-              system to replace a spreadsheet that 20 people are sharing, and
-              sometimes it&apos;s a client-facing portal for a professional
-              services firm. What most of our projects have in common is that
-              the client needed something specific, not a generic tool.
+              Our clients usually come to us when a process has outgrown
+              spreadsheets, manual follow-ups, disconnected tools, or a website
+              that no longer represents the business well. We help turn those
+              problems into clear systems that are easier to use, easier to
+              manage, and easier to improve over time.
             </p>
             <p>
-              Our process is straightforward. We start with a conversation to
-              understand the problem, then scope the work clearly before
-              starting. You&apos;ll know what you&apos;re getting, what
-              it&apos;ll cost, and when it&apos;ll be ready before we begin.
+              We prefer honest scoping over vague promises. Before development
+              starts, we define what needs to be built, what it should cost,
+              how long it should take, and where the risks are. That gives both
+              sides a better project from the beginning.
             </p>
             <p>
-              When a project is done, we hand it over properly — with
-              documentation, credentials, and support for your team to take
-              ownership of what was built.
+              After launch, we hand over the work properly with documentation,
+              credentials, and support. The goal is simple: your business
+              should understand and trust the system it depends on.
             </p>
           </div>
 
-          {/* What we value */}
           <div className="mt-10">
             <h2 className="text-xl font-bold text-foreground mb-4">
-              How we approach work
+              What we believe good software should do
             </h2>
             <dl className="space-y-4">
               {[
                 {
-                  term: "Specificity over templates",
-                  def: "We build to your requirements, not from a generic template that was designed for every business at once.",
+                  term: "Support the way the business works",
+                  def: "The system should fit the real workflow, not force the team into unnecessary steps.",
                 },
                 {
-                  term: "Clear scope before any work starts",
-                  def: "We document what's being built and what's not. Surprises mid-project are avoidable, and we try to avoid them.",
+                  term: "Make important information easier to find",
+                  def: "Good software gives the right people access to the right information without confusion.",
                 },
                 {
-                  term: "Code you can maintain",
-                  def: "We don't write code that only we can understand. Everything we build should be approachable by any competent developer after we hand it over.",
+                  term: "Stay understandable after launch",
+                  def: "We build with clean structure, documentation, and handover in mind from the start.",
                 },
                 {
-                  term: "No unnecessary complexity",
-                  def: "If a simpler solution works, we use it. We don't add technology for the sake of it.",
+                  term: "Avoid complexity that does not pay for itself",
+                  def: "If a simpler solution solves the problem well, that is usually the better solution.",
                 },
               ].map(({ term, def }) => (
                 <div key={term} className="border-l-2 border-primary pl-4">
@@ -83,14 +81,14 @@ export default function AboutPage() {
               Work with us
             </h2>
             <p className="text-sm text-muted-foreground mb-4">
-              If you have a project in mind, tell us about it. We&apos;ll
-              respond within one business day.
+              Tell us what you need to improve. We will review it and respond
+              with a practical next step.
             </p>
             <Link
               href="/contact"
               className="block text-center px-4 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
-              Get in touch
+              Start a conversation
             </Link>
           </div>
 

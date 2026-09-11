@@ -17,7 +17,7 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 export const metadata: Metadata = {
   title: "Services | GOPANG IT SOLUTION",
   description:
-    "Enterprise-grade software engineering, cloud infrastructure, and technical consulting.",
+    "Professional web development, business applications, IT consulting, and maintenance support.",
 };
 
 const iconMap: Record<string, React.ElementType> = {
@@ -51,7 +51,16 @@ export default async function ServicesPage() {
       .eq("published", true)
       .order("sort_order", { ascending: true });
 
-    services = result.data?.length ? result.data : fallbackServices;
+    const databaseServices = result.data ?? [];
+    services = fallbackServices.map((fallback) => {
+      const databaseService = databaseServices.find(
+        (item) => item.slug === fallback.slug,
+      );
+
+      return databaseService
+        ? { ...databaseService, title: fallback.title, summary: fallback.summary }
+        : fallback;
+    });
   }
 
   if (!services) {
@@ -78,9 +87,10 @@ export default async function ServicesPage() {
           Services
         </h1>
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-          We don&apos;t just write code. We build scalable systems, optimize
-          infrastructure, and solve complex business problems through
-          technology.
+          We help businesses plan, build, and maintain practical software:
+          websites that explain the business clearly, applications that support
+          daily operations, and technical guidance when the next decision
+          matters.
         </p>
       </div>
 
@@ -106,7 +116,7 @@ export default async function ServicesPage() {
               </p>
 
               <div className="mt-auto flex items-center text-sm font-medium text-primary">
-                Explore service{" "}
+                View service{" "}
                 <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
             </Link>
@@ -117,14 +127,14 @@ export default async function ServicesPage() {
       {/* Bottom CTA */}
       <div className="mt-16 pt-10 border-t border-border">
         <p className="text-muted-foreground">
-          Not sure which service applies to your situation?{" "}
+          Not sure where your project fits?{" "}
           <Link
             href="/contact"
             className="text-primary hover:underline font-medium"
           >
-            Send us a message
+            Tell us what you are trying to solve
           </Link>{" "}
-          and we&apos;ll figure it out together.
+          and we will point you in the right direction.
         </p>
       </div>
     </div>

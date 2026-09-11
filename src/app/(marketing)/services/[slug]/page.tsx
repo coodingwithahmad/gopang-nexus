@@ -67,6 +67,7 @@ export default async function ServiceDetailPage({ params }: Props) {
     title: string;
     summary: string;
     description: string;
+    deliverables?: string[];
     icon_name?: string;
     iconName?: string;
   } | null = fallbackService
@@ -74,6 +75,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         title: fallbackService.title,
         summary: fallbackService.summary,
         description: fallbackService.description,
+        deliverables: fallbackService.deliverables,
         iconName: fallbackService.iconName,
       }
     : null;
@@ -88,7 +90,15 @@ export default async function ServiceDetailPage({ params }: Props) {
       .eq("published", true)
       .maybeSingle();
 
-    service = result.data || service;
+    service = fallbackService
+      ? {
+          title: fallbackService.title,
+          summary: fallbackService.summary,
+          description: fallbackService.description,
+          deliverables: fallbackService.deliverables,
+          iconName: fallbackService.iconName,
+        }
+      : result.data || service;
     error = result.error;
   }
 
@@ -128,6 +138,21 @@ export default async function ServiceDetailPage({ params }: Props) {
           {service.description || "More details coming soon."}
         </ReactMarkdown>
       </div>
+
+      {service.deliverables?.length ? (
+        <div className="mt-12 rounded-lg border border-border bg-muted/20 p-6">
+          <h2 className="text-lg font-semibold text-foreground">
+            What this can include
+          </h2>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+            {service.deliverables.map((item) => (
+              <li key={item} className="text-sm text-muted-foreground">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 }

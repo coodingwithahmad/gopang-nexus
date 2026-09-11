@@ -3,25 +3,25 @@ const steps = [
     number: "01",
     title: "Discovery",
     description:
-      "We start with a conversation about what you're trying to solve. We ask questions, review what you already have, and understand how your team works before proposing anything.",
+      "We learn what you are trying to improve, where the current process breaks down, and what success should look like before suggesting a solution.",
   },
   {
     number: "02",
     title: "Scoping",
     description:
-      "We document what needs to be built, the technical approach, and what's out of scope. You get a clear proposal with a timeline and fixed or estimated cost before any work begins.",
+      "We define the work, the technical approach, the timeline, and what is not included, so expectations are clear before development starts.",
   },
   {
     number: "03",
     title: "Build",
     description:
-      "We build in stages and keep you updated throughout. You can see progress, give feedback, and request adjustments before the project is finalized.",
+      "We build in practical stages, share progress, and keep decisions visible so the final product matches the business need, not just the original guess.",
   },
   {
     number: "04",
     title: "Handover",
     description:
-      "When the project is complete, we document how it works, transfer all assets, and make sure your team knows how to use and manage what was built.",
+      "We hand over the system with documentation, credentials, and support so your team can use it confidently after launch.",
   },
 ];
 
@@ -31,11 +31,11 @@ export function ProcessSection() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 lg:py-20">
         <div className="max-w-lg mb-10">
           <h2 className="text-2xl font-bold tracking-tight text-foreground">
-            How we work
+            A process that keeps the work clear
           </h2>
           <p className="mt-2 text-muted-foreground">
-            A straightforward process designed to keep projects on track and
-            clients informed.
+            No vague promises, no mystery timelines. Each project starts with a
+            clear scope and moves forward in visible stages.
           </p>
         </div>
 

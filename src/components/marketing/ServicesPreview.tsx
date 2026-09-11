@@ -18,18 +18,18 @@ export function ServicesPreview() {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              What we do
+              Services built around real business needs
             </h2>
             <p className="mt-2 text-muted-foreground">
-              A focused set of services for businesses that need reliable
-              software.
+              Focused technical work for companies that need reliable systems,
+              clear communication, and software that earns its place.
             </p>
           </div>
           <Link
             href="/services"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline shrink-0"
           >
-            All services
+            View all services
             <ArrowRight size={14} />
           </Link>
         </div>

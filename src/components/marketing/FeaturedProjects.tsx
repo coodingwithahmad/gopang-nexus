@@ -10,17 +10,18 @@ export function FeaturedProjects() {
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">
-            Recent projects
+            Practical work, built for real operations
           </h2>
           <p className="mt-2 text-muted-foreground">
-            A sample of the work we&apos;ve done for clients.
+            Examples of systems designed to replace manual work, improve
+            visibility, and make day-to-day operations easier to manage.
           </p>
         </div>
         <Link
           href="/projects"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline shrink-0"
         >
-          All projects
+          View projects
           <ArrowRight size={14} />
         </Link>
       </div>

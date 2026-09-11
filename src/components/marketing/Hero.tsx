@@ -13,26 +13,26 @@ export function Hero() {
             GOPANG IT SOLUTION
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl leading-[1.15]">
-            Software your team can actually use.
+            Reliable software for serious business work.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-2xl">
-            We build websites, business applications, and internal tools for
-            companies that need software that fits how they work — and stays
-            maintainable as they grow.
+            GOPANG IT SOLUTION designs, builds, and supports websites,
+            business applications, and internal systems that are clear to use,
+            easy to manage, and built around how your company actually works.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4">
             <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-primary shadow-lg shadow-primary/20 text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all hover:-translate-y-0.5 active:translate-y-0"
             >
-              Get in touch
+              Discuss a project
               <ArrowRight size={16} />
             </Link>
             <Link
               href="/services"
               className="inline-flex items-center justify-center px-6 py-3.5 rounded-lg border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-all hover:-translate-y-0.5 active:translate-y-0"
             >
-              See what we do
+              View services
             </Link>
           </div>
         </div>

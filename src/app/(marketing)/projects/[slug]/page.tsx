@@ -55,7 +55,8 @@ export default async function ProjectDetailPage({ params }: Props) {
       .eq("published", true)
       .maybeSingle();
 
-    project = result.data || project;
+    const fallbackProject = getProjectBySlug(slug);
+    project = fallbackProject || result.data || project;
     error = result.error;
   }
 
@@ -103,13 +104,13 @@ export default async function ProjectDetailPage({ params }: Props) {
 
         <div className="mt-12 pt-8 border-t border-border">
           <h2 className="text-lg font-semibold text-foreground mb-4">
-            Ready to start your project?
+            Need something similar for your business?
           </h2>
           <Link
             href="/contact"
             className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
           >
-            Get a consultation
+            Start the conversation
           </Link>
         </div>
       </div>

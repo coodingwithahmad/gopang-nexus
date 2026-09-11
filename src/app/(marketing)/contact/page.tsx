@@ -4,7 +4,7 @@ import { ContactForm } from "@/components/forms/ContactForm";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Get in touch with GOPANG IT SOLUTION. We respond within one business day.",
+    "Contact GOPANG IT SOLUTION to discuss a website, business application, internal tool, or support request.",
 };
 
 export default function ContactPage() {
@@ -13,11 +13,11 @@ export default function ContactPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 lg:gap-16">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Get in touch
+            Tell us what you need to improve
           </h1>
           <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-            Tell us about your project and we&apos;ll respond within one
-            business day.
+            Share the problem, the goal, or the system you have in mind. We
+            will review it and respond with a practical next step.
           </p>
 
           <div className="mt-8">
@@ -41,9 +41,9 @@ export default function ContactPage() {
           <div>
             <h2 className="font-semibold text-foreground mb-2">Response time</h2>
             <p className="text-sm text-muted-foreground">
-              We respond to all enquiries within one business day. For urgent
-              support, existing clients can open a ticket through the client
-              portal.
+              Most enquiries receive a reply within one business day. Existing
+              clients can use the portal for project questions and support
+              tickets.
             </p>
           </div>
 
@@ -52,9 +52,9 @@ export default function ContactPage() {
               Before you write
             </h2>
             <p className="text-sm text-muted-foreground">
-              The more specific you can be about what you need, the faster we
-              can give you a useful response. We don&apos;t require a full
-              brief — just an honest description of the problem.
+              A complete brief is not required. A clear description of what is
+              not working, what you want to build, or what decision you need to
+              make is enough to start.
             </p>
           </div>
         </aside>

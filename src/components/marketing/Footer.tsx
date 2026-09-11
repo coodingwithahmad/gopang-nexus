@@ -37,8 +37,8 @@ export function Footer() {
               <span className="text-primary">.</span>
             </Link>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-xs">
-              IT solutions for businesses that need software they can actually
-              use and maintain.
+              Websites, business applications, and IT support for companies
+              that need practical systems built with care.
             </p>
             <p className="mt-3 text-sm text-muted-foreground">
               <a

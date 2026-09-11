@@ -6,7 +6,7 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 export const metadata: Metadata = {
   title: "Insights | GOPANG IT SOLUTION",
   description:
-    "Read our latest thoughts on software engineering, business tools, and technology.",
+    "Practical notes on software, operations, business tools, and technical decisions.",
 };
 
 export const revalidate = 0; // Always fetch latest insights
@@ -37,7 +37,8 @@ export default async function InsightsPage() {
         </div>
         <div className="rounded-lg border border-border bg-muted/30 p-12 text-center">
           <p className="text-muted-foreground">
-            We&apos;re writing about our work. Check back soon for updates.
+            We are preparing practical notes from our work with websites,
+            business applications, and internal systems.
           </p>
         </div>
       </div>
@@ -51,15 +52,17 @@ export default async function InsightsPage() {
           Insights
         </h1>
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-          Technical breakdowns, engineering strategies, and thoughts on building
-          software that solves actual business problems.
+          Practical notes on software decisions, internal tools, maintenance,
+          and the trade-offs that matter when technology supports real
+          operations.
         </p>
       </div>
 
       {!posts || posts.length === 0 ? (
         <div className="rounded-lg border border-border bg-muted/30 p-12 text-center">
           <p className="text-muted-foreground">
-            We&apos;re writing about our work. Check back soon for updates.
+            We are preparing practical notes from our work with websites,
+            business applications, and internal systems.
           </p>
         </div>
       ) : (
@@ -79,7 +82,7 @@ export default async function InsightsPage() {
                     : "Draft"}
                 </time>
                 <span className="relative z-10 rounded-full bg-muted px-3 py-1.5 font-medium text-foreground">
-                  Blog
+                  Insight
                 </span>
               </div>
 
@@ -96,7 +99,7 @@ export default async function InsightsPage() {
               </div>
 
               <div className="mt-8 flex items-center text-sm font-medium text-primary">
-                Read full article{" "}
+                Read article{" "}
                 <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </div>
             </article>

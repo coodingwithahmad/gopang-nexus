@@ -6,7 +6,7 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 export const metadata: Metadata = {
   title: "Projects",
   description:
-    "A selection of websites, business applications, and internal tools we have built for clients.",
+    "Examples of practical websites, portals, and internal systems built for business operations.",
 };
 
 export const revalidate = 0; // Always fetch latest projects
@@ -27,7 +27,21 @@ export default async function ProjectsPage() {
       .eq("published", true)
       .order("sort_order", { ascending: true });
 
-    portfolioProjects = result.data?.length ? result.data : fallbackProjects;
+    const databaseProjects = result.data ?? [];
+    portfolioProjects = fallbackProjects.map((fallback) => {
+      const databaseProject = databaseProjects.find(
+        (item) => item.slug === fallback.slug,
+      );
+
+      return databaseProject
+        ? {
+            ...databaseProject,
+            title: fallback.title,
+            summary: fallback.summary,
+            tags: fallback.tags,
+          }
+        : fallback;
+    });
   }
 
   if (!portfolioProjects) {
@@ -54,8 +68,9 @@ export default async function ProjectsPage() {
           Projects
         </h1>
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-          A selection of work we&apos;ve done for clients across different
-          industries. Client names are kept confidential.
+          A few examples of the type of work we handle: systems that replace
+          manual processes, improve visibility, and make operations easier to
+          manage. Client names are kept confidential.
         </p>
       </div>
 
@@ -100,12 +115,12 @@ export default async function ProjectsPage() {
 
       <div className="mt-12 pt-8 border-t border-border">
         <p className="text-muted-foreground text-sm">
-          Have a project similar to one of these?{" "}
+          Working through a similar problem?{" "}
           <Link
             href="/contact"
             className="text-primary hover:underline font-medium"
           >
-            Let&apos;s talk.
+            Start a conversation.
           </Link>
         </p>
       </div>

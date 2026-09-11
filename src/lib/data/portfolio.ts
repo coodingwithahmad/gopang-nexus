@@ -6,7 +6,7 @@
 export interface PortfolioItem {
   slug: string;
   title: string;
-  client: string; // Generic client description, no real company names
+  client: string;
   summary: string;
   description: string;
   tags: string[];
@@ -18,47 +18,47 @@ export const portfolioProjects: PortfolioItem[] = [
   {
     slug: "inventory-management-system",
     title: "Inventory Management System",
-    client: "Regional distribution company",
+    client: "Distribution business",
     summary:
-      "A web-based inventory system replacing a spreadsheet workflow used by a team of 12.",
+      "A stock management platform that replaced shared spreadsheets and gave the team a single source of truth.",
     description:
-      "The client was managing stock across three warehouse locations using a shared Excel file. This created version conflicts, no audit trail, and frequent stock discrepancies. We built a web application that gave every team member a real-time view of stock levels, location, and movement history.",
-    tags: ["Web Application", "React", "PostgreSQL"],
+      "The client was managing stock across multiple locations through a shared spreadsheet. Updates were delayed, mistakes were hard to trace, and managers did not have a reliable view of what was available. We built a web-based inventory system with stock movements, location tracking, user roles, and practical reporting.",
+    tags: ["Inventory", "Operations", "Reporting"],
     challenge:
-      "The existing spreadsheet approach meant stock data was always slightly out of date and errors were hard to trace. The team needed something fast to learn and work reliably on low-spec tablets.",
+      "The team needed accurate stock information without forcing staff into a complicated system. The existing process was familiar, but it created errors and wasted time.",
     solution:
-      "A focused web application with role-based access, barcode scanning support, low-bandwidth optimization, and a daily PDF report generation for management.",
+      "We designed a focused inventory application with role-based access, movement history, location visibility, and reports that management could review without asking staff to prepare manual updates.",
   },
   {
     slug: "client-billing-portal",
     title: "Client Billing Portal",
     client: "Professional services firm",
     summary:
-      "A self-service portal giving clients access to their invoices, project status, and documents.",
+      "A secure portal where clients can view invoices, project status, shared documents, and account updates.",
     description:
-      "The client's team was spending significant time each month sending invoices manually and answering status questions by email. We built a client portal where each client logs in to see their active projects, download invoices, and access shared documents.",
-    tags: ["Client Portal", "Next.js", "Supabase"],
+      "The business was spending too much time sending invoice updates, answering status questions, and sharing documents through email threads. We built a client portal that gives each client a private, organized view of their account information.",
+    tags: ["Client Portal", "Invoices", "Secure Access"],
     challenge:
-      "Each client needed a completely isolated view of their own data. Security and simplicity were both requirements — the client base ranged from tech-comfortable to very non-technical.",
+      "The system needed to be simple enough for non-technical clients while keeping each client's information isolated and secure.",
     solution:
-      "Row-level security in PostgreSQL ensures complete data isolation. The interface was kept intentionally simple with no unnecessary features.",
+      "We built a clean portal with account-based access, invoice visibility, project updates, document areas, and a structure that staff can manage without relying on scattered email communication.",
   },
   {
     slug: "field-service-scheduling",
     title: "Field Service Scheduling Tool",
-    client: "Facilities management company",
+    client: "Facilities company",
     summary:
-      "A scheduling and dispatch tool for coordinating field technicians across job sites.",
+      "A scheduling and dispatch system for assigning field work, tracking job status, and reducing missed updates.",
     description:
-      "The client coordinated 20+ field technicians using phone calls and a whiteboard. Missed jobs, double-bookings, and no visibility into job status were regular problems. We built a web-based scheduling tool with a calendar view, job assignment, status updates, and a technician mobile view.",
-    tags: ["Scheduling", "Mobile Web", "Real-time"],
+      "The client coordinated field technicians through phone calls, messages, and a whiteboard. Jobs were easy to miss, status updates were inconsistent, and office staff had limited visibility once technicians left for the day. We built a scheduling tool with job assignment, technician views, and status tracking.",
+    tags: ["Scheduling", "Field Teams", "Status Tracking"],
     challenge:
-      "Technicians needed access in the field on mobile devices, often with poor connectivity. The office team needed real-time job status without calling technicians.",
+      "The office needed better control over scheduling without making the mobile experience difficult for technicians in the field.",
     solution:
-      "Offline-capable mobile web interface for technicians, real-time dispatch view for coordinators, and automated SMS notifications on job assignment.",
+      "We created a web-based scheduling system with clear job views, technician assignments, status updates, and a dispatch view that helps the office team understand what is happening in real time.",
   },
 ];
 
 export function getProjectBySlug(slug: string): PortfolioItem | undefined {
-  return portfolioProjects.find((p) => p.slug === slug);
+  return portfolioProjects.find((project) => project.slug === slug);
 }
