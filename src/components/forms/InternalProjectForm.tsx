@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   createInternalProjectAction,
   updateInternalProjectAction,
@@ -9,7 +8,7 @@ import {
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
-type InternalProject = {
+export type InternalProjectFormData = {
   id?: string;
   client_id: string;
   title: string;
@@ -19,14 +18,19 @@ type InternalProject = {
   due_date: string | null;
 };
 
+export type InternalProjectClientOption = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+};
+
 export function InternalProjectForm({
   initialData,
   clients,
 }: {
-  initialData?: InternalProject;
-  clients: { id: string; full_name: string; email: string }[];
+  initialData?: InternalProjectFormData;
+  clients: InternalProjectClientOption[];
 }) {
-  const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

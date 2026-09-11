@@ -3,6 +3,22 @@ import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
 import { MessageSquare } from "lucide-react";
 
+type ChatTicket = {
+  id: string;
+  updated_at: string;
+  client?: {
+    full_name: string | null;
+    email: string | null;
+  } | null;
+};
+
+type LatestMessage = {
+  ticket_id: string;
+  content: string;
+  created_at: string;
+  is_internal: boolean;
+};
+
 export default async function ChatsIndexPage() {
   const supabase = await createClient();
   
@@ -16,9 +32,9 @@ export default async function ChatsIndexPage() {
       client:profiles!tickets_client_id_fkey(id, full_name, email)
     `);
 
-  const tickets = (ticketsData || []) as any[];
+  const tickets = (ticketsData || []) as unknown as ChatTicket[];
   const ticketIds = tickets.map((t) => t.id);
-  let latestMessages: Record<string, any> = {};
+  const latestMessages: Record<string, LatestMessage> = {};
 
   if (ticketIds.length > 0) {
     const { data: messages } = await supabase

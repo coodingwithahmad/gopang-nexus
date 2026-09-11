@@ -2,7 +2,10 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { PortfolioProjectForm } from "@/components/forms/PortfolioProjectForm";
+import {
+  PortfolioProjectForm,
+  type PortfolioProjectFormData,
+} from "@/components/forms/PortfolioProjectForm";
 
 export default async function EditAdminProjectPage({
   params,
@@ -22,6 +25,8 @@ export default async function EditAdminProjectPage({
     notFound();
   }
 
+  const projectData = project as unknown as PortfolioProjectFormData;
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <Link
@@ -35,12 +40,12 @@ export default async function EditAdminProjectPage({
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-foreground">Edit Project</h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Update the details for <strong>{project.title}</strong>.
+          Update the details for <strong>{projectData.title}</strong>.
         </p>
       </div>
 
       <div className="bg-background rounded-xl border border-border shadow-sm p-6">
-        <PortfolioProjectForm initialData={project as any} />
+        <PortfolioProjectForm initialData={projectData} />
       </div>
     </div>
   );

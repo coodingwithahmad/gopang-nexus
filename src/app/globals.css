@@ -18,7 +18,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: "Segoe UI", Arial, sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -120,12 +120,23 @@
 
 @layer utilities {
   .bg-grid-pattern {
-    background-image: linear-gradient(to right, hsl(var(--border) / 0.3) 1px, transparent 1px),
-      linear-gradient(to bottom, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-image: linear-gradient(
+        to right,
+        color-mix(in oklch, var(--border) 30%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--border) 30%, transparent) 1px,
+        transparent 1px
+      );
     background-size: 40px 40px;
   }
   .bg-dot-pattern {
-    background-image: radial-gradient(hsl(var(--muted-foreground) / 0.2) 1px, transparent 1px);
+    background-image: radial-gradient(
+      color-mix(in oklch, var(--muted-foreground) 20%, transparent) 1px,
+      transparent 1px
+    );
     background-size: 24px 24px;
   }
 }

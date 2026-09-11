@@ -9,6 +9,14 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
+type RecentChat = {
+  id: string;
+  created_at: string;
+  client?: {
+    full_name: string | null;
+  } | null;
+};
+
 export default async function AdminOverviewPage() {
   const supabase = await createClient();
 
@@ -29,7 +37,7 @@ export default async function AdminOverviewPage() {
   const clientCount = clientsRes.count ?? 0;
   const activeProjectsCount = projectsRes.count ?? 0;
   const publicProjectsCount = publicProjectsRes.count ?? 0;
-  const recentChats = chatsRes.data ?? [];
+  const recentChats = (chatsRes.data ?? []) as unknown as RecentChat[];
 
   const invoices = invoicesRes.data || [];
   const totalRevenue = invoices.filter(inv => inv.status === "paid").reduce((sum, inv) => sum + inv.amount, 0);
@@ -40,7 +48,7 @@ export default async function AdminOverviewPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Welcome back! Here's what's happening today.
+            Welcome back! Here&apos;s what&apos;s happening today.
           </p>
         </div>
       </div>
@@ -100,7 +108,7 @@ export default async function AdminOverviewPage() {
           ) : (
             <div className="rounded-lg border border-border overflow-hidden bg-background shadow-sm">
               <div className="divide-y divide-border">
-                {recentChats.map((chat: any) => (
+                {recentChats.map((chat) => (
                   <div key={chat.id} className="p-4 flex items-center justify-between hover:bg-muted/30 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">

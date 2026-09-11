@@ -36,7 +36,7 @@ export async function createServiceAction(formData: FormData) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
 
-  const { error } = await (supabase as any).from("services").insert({
+  const { error } = await supabase.from("services").insert({
     title,
     slug,
     summary,
@@ -80,6 +80,7 @@ export async function updateServiceAction(id: string, formData: FormData) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any)
     .from("services")
     .update({
@@ -115,7 +116,7 @@ export async function deleteServiceAction(id: string) {
 
   if (profile?.role !== "admin") throw new Error("Forbidden");
 
-  const { error } = await (supabase as any).from("services").delete().eq("id", id);
+  const { error } = await supabase.from("services").delete().eq("id", id);
 
   if (error) {
     throw new Error(error.message);

@@ -2,7 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { InternalProjectForm } from "@/components/forms/InternalProjectForm";
+import {
+  InternalProjectForm,
+  type InternalProjectClientOption,
+  type InternalProjectFormData,
+} from "@/components/forms/InternalProjectForm";
 
 export default async function EditInternalProjectPage({
   params,
@@ -21,6 +25,9 @@ export default async function EditInternalProjectPage({
     notFound();
   }
 
+  const projectData = project as unknown as InternalProjectFormData;
+  const clientOptions = (clients ?? []) as unknown as InternalProjectClientOption[];
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <Link
@@ -34,12 +41,12 @@ export default async function EditInternalProjectPage({
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-foreground">Edit Project</h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Update the status and details for <strong>{project.title}</strong>.
+          Update the status and details for <strong>{projectData.title}</strong>.
         </p>
       </div>
 
       <div className="bg-background rounded-xl border border-border shadow-sm p-6">
-        <InternalProjectForm initialData={project as any} clients={(clients as any) || []} />
+        <InternalProjectForm initialData={projectData} clients={clientOptions} />
       </div>
     </div>
   );

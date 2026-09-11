@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatCurrency } from "@/lib/utils";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Invoices Manager",
@@ -16,6 +15,20 @@ const statusStyle: Record<string, string> = {
   paid: "bg-green-100 text-green-700 border border-green-200",
   overdue: "bg-red-100 text-red-700 border border-red-200",
   cancelled: "bg-muted text-muted-foreground border border-border",
+};
+
+type AdminInvoice = {
+  id: string;
+  invoice_no: string;
+  status: string;
+  amount: number;
+  currency: string;
+  issued_date: string;
+  due_date: string;
+  paid_date: string | null;
+  client?: {
+    full_name: string | null;
+  } | null;
 };
 
 export default async function AdminInvoicesPage() {
@@ -38,7 +51,7 @@ export default async function AdminInvoicesPage() {
     );
   }
 
-  const invoicesList = (invoices || []) as any[];
+  const invoicesList = (invoices || []) as unknown as AdminInvoice[];
 
   const totalRevenue = invoicesList
     .filter((inv) => inv.status === "paid")
@@ -89,14 +102,14 @@ export default async function AdminInvoicesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {!invoices || invoices.length === 0 ? (
+              {invoicesList.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
                     No invoices generated yet.
                   </td>
                 </tr>
               ) : (
-                invoices.map((invoice: any) => (
+                invoicesList.map((invoice) => (
                   <tr key={invoice.id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-6 py-4 font-medium text-foreground">
                       {invoice.invoice_no}

@@ -24,6 +24,7 @@ export async function createFaqAction(formData: FormData) {
   const sort_order = parseInt(formData.get("sort_order") as string, 10) || 0;
   const is_active = formData.get("is_active") === "true" || formData.get("is_active") === "on";
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any).from("faqs").insert({
     question,
     answer,
@@ -59,6 +60,7 @@ export async function updateFaqAction(id: string, formData: FormData) {
   const sort_order = parseInt(formData.get("sort_order") as string, 10) || 0;
   const is_active = formData.get("is_active") === "true" || formData.get("is_active") === "on";
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any)
     .from("faqs")
     .update({
@@ -91,6 +93,7 @@ export async function deleteFaqAction(id: string) {
 
   if (profile?.role !== "admin") throw new Error("Forbidden");
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any).from("faqs").delete().eq("id", id);
 
   if (error) throw new Error(error.message);

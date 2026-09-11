@@ -27,6 +27,7 @@ export async function updateSettingsAction(formData: FormData) {
 
   for (const item of updates) {
     if (item.value !== null) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await (supabase as any)
         .from("settings")
         .upsert(

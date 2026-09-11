@@ -2,9 +2,12 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { formatDateTime } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
-import { ChatThread } from "@/components/dashboard/ChatThread";
+import {
+  ChatThread,
+  type ChatAuthor,
+  type ChatMessage,
+} from "@/components/dashboard/ChatThread";
 
 export const metadata: Metadata = {
   title: "Chat",
@@ -15,18 +18,13 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-const statusLabel: Record<string, string> = {
-  open: "Open",
-  in_progress: "In Progress",
-  resolved: "Resolved",
-  closed: "Closed",
-};
-
-const statusStyle: Record<string, string> = {
-  open: "bg-blue-50 text-blue-700 border border-blue-200",
-  in_progress: "bg-amber-50 text-amber-700 border border-amber-200",
-  resolved: "bg-green-50 text-green-700 border border-green-200",
-  closed: "bg-muted text-muted-foreground",
+type ChatTicketDetail = {
+  id: string;
+  status: string;
+  client?: {
+    full_name: string | null;
+    email: string | null;
+  } | null;
 };
 
 export default async function ChatDetailPage({ params }: Props) {
@@ -35,14 +33,6 @@ export default async function ChatDetailPage({ params }: Props) {
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  const isAdmin = profile?.role === "admin";
 
   const { data } = await supabase
     .from("tickets")
@@ -53,20 +43,21 @@ export default async function ChatDetailPage({ params }: Props) {
     .eq("id", id)
     .single();
 
-  const ticket = data as any;
+  const ticket = data as unknown as ChatTicketDetail | null;
 
   if (!ticket) notFound();
 
   // If a client tries to access someone else's ticket, block it.
   // Note: RLS handles this, but double checking is good practice.
   
-  const { data: messages } = await supabase
+  const { data: messagesData } = await supabase
     .from("ticket_messages")
     .select("id, content, author_id, is_internal, created_at")
     .eq("ticket_id", id)
     .order("created_at");
 
-  const authorIds = [...new Set((messages ?? []).map((m) => m.author_id))];
+  const messages = (messagesData ?? []) as unknown as ChatMessage[];
+  const authorIds = [...new Set(messages.map((m) => m.author_id))];
   const { data: authors } = await supabase
     .from("profiles")
     .select("id, full_name, role")
@@ -75,9 +66,7 @@ export default async function ChatDetailPage({ params }: Props) {
   const authorMap = authors?.reduce((acc, curr) => {
     acc[curr.id] = curr;
     return acc;
-  }, {} as Record<string, any>) ?? {};
-
-  const isTicketOpen = ["open", "in_progress"].includes(ticket.status);
+  }, {} as Record<string, ChatAuthor>) ?? {};
 
   return (
     <div className="flex flex-col h-full bg-background relative">
@@ -104,10 +93,10 @@ export default async function ChatDetailPage({ params }: Props) {
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-muted/10 relative">
         <ChatThread 
           ticketId={ticket.id}
-          initialMessages={messages ?? []}
+          initialMessages={messages}
           authorMap={authorMap}
           currentUserId={user.id}
-          isTicketOpen={true}
+          isTicketOpen={["open", "in_progress"].includes(ticket.status)}
         />
       </div>
     </div>

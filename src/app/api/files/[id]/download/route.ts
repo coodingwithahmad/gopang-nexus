@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
 

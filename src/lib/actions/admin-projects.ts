@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,7 +18,7 @@ export async function createPortfolioProjectAction(formData: FormData): Promise<
   const published = formData.get("published") === "true" || formData.get("published") === "on";
   const sort_order = parseInt(formData.get("sort_order") as string, 10) || 0;
 
-  const { error } = await (supabase as any).from("portfolio_projects").insert({
+  const { error } = await supabase.from("portfolio_projects").insert({
     title,
     slug,
     summary,
@@ -54,6 +53,7 @@ export async function updatePortfolioProjectAction(id: string, formData: FormDat
   const published = formData.get("published") === "true" || formData.get("published") === "on";
   const sort_order = parseInt(formData.get("sort_order") as string, 10) || 0;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any).from("portfolio_projects").update({
     title,
     slug,
@@ -79,7 +79,7 @@ export async function deletePortfolioProjectAction(formData: FormData): Promise<
 
   const id = formData.get("id") as string;
 
-  const { error } = await (supabase as any).from("portfolio_projects").delete().eq("id", id);
+  const { error } = await supabase.from("portfolio_projects").delete().eq("id", id);
 
   if (error) {
     throw new Error(error.message);

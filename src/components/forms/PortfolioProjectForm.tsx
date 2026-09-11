@@ -10,7 +10,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { ImageUpload } from "@/components/forms/ImageUpload";
 
-type Project = {
+export type PortfolioProjectFormData = {
   id?: string;
   title: string;
   slug?: string;
@@ -25,7 +25,7 @@ type Project = {
 export function PortfolioProjectForm({
   initialData,
 }: {
-  initialData?: Project;
+  initialData?: PortfolioProjectFormData;
 }) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);

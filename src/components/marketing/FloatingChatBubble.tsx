@@ -1,16 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MessageCircle, X, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { getOrCreateClientChat } from "@/lib/actions/client-chat";
-import { ChatThread } from "@/components/dashboard/ChatThread";
+import {
+  ChatThread,
+  type ChatAuthor,
+  type ChatMessage,
+} from "@/components/dashboard/ChatThread";
 import { usePathname } from "next/navigation";
 
 export function FloatingChatBubble() {
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "unauthenticated" | "admin" | "ready" | "error">("idle");
-  const [chatData, setChatData] = useState<any>(null);
+  const [chatData, setChatData] = useState<{
+    ticketId: string;
+    messages: ChatMessage[];
+    authorMap: Record<string, ChatAuthor>;
+    currentUserId: string;
+  } | null>(null);
   const pathname = usePathname();
 
   // Don't show bubble on auth pages or dashboard
@@ -30,7 +39,7 @@ export function FloatingChatBubble() {
         } else {
           setStatus(res.status);
         }
-      } catch (err) {
+      } catch {
         setStatus("error");
       }
     }

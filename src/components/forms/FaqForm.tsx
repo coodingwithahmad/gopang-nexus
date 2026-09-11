@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { createFaqAction, updateFaqAction } from "@/lib/actions/faqs";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
@@ -16,7 +15,6 @@ type Faq = {
 };
 
 export function FaqForm({ initialData }: { initialData?: Faq }) {
-  const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

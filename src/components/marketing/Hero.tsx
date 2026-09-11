@@ -23,7 +23,7 @@ export function Hero() {
           <div className="mt-8 flex flex-col sm:flex-row gap-4">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-primary shadow-[0_4px_14px_0_hsl(var(--primary)_/_39%)] text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all hover:-translate-y-0.5 active:translate-y-0"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-primary shadow-lg shadow-primary/20 text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all hover:-translate-y-0.5 active:translate-y-0"
             >
               Get in touch
               <ArrowRight size={16} />

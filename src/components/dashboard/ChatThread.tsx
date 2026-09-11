@@ -6,6 +6,20 @@ import { formatDateTime } from "@/lib/utils";
 import { TicketReplyForm } from "@/components/forms/TicketReplyForm";
 import { useRouter } from "next/navigation";
 
+export type ChatMessage = {
+  id: string;
+  author_id: string;
+  content: string;
+  is_internal: boolean;
+  created_at: string;
+};
+
+export type ChatAuthor = {
+  id: string;
+  full_name: string | null;
+  role: "client" | "admin";
+};
+
 export function ChatThread({ 
   ticketId, 
   initialMessages, 
@@ -14,8 +28,8 @@ export function ChatThread({
   isTicketOpen
 }: { 
   ticketId: string;
-  initialMessages: any[];
-  authorMap: Record<string, any>;
+  initialMessages: ChatMessage[];
+  authorMap: Record<string, ChatAuthor>;
   currentUserId: string;
   isTicketOpen: boolean;
 }) {
@@ -41,7 +55,7 @@ export function ChatThread({
           filter: `ticket_id=eq.${ticketId}`,
         },
         async (payload) => {
-          const newMsg = payload.new;
+          const newMsg = payload.new as ChatMessage;
           // If the message is internal and the current user is a client, skip it
           // Wait, RLS doesn't apply to realtime payloads by default unless configured,
           // but our RLS says clients can only select non-internal. Let's filter on client side just in case,

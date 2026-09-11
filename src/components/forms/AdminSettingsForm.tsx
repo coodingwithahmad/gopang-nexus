@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 export function SettingsForm({
   initialData,
 }: {
-  initialData: Record<string, any>;
+  initialData: Record<string, string | null>;
 }) {
   const [isPending, setIsPending] = useState(false);
   const [message, setMessage] = useState<{

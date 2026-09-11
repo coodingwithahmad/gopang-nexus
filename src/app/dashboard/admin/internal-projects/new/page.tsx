@@ -1,16 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { InternalProjectForm } from "@/components/forms/InternalProjectForm";
+import {
+  InternalProjectForm,
+  type InternalProjectClientOption,
+} from "@/components/forms/InternalProjectForm";
 
 export default async function NewInternalProjectPage() {
   const supabase = await createClient();
 
-  const { data: clients } = await supabase
+  const { data: clientsData } = await supabase
     .from("profiles")
     .select("id, full_name, email")
     .eq("role", "client")
     .order("full_name");
+  const clients = (clientsData ?? []) as unknown as InternalProjectClientOption[];
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -30,7 +34,7 @@ export default async function NewInternalProjectPage() {
       </div>
 
       <div className="bg-background rounded-xl border border-border shadow-sm p-6">
-        <InternalProjectForm clients={(clients as any) || []} />
+        <InternalProjectForm clients={clients} />
       </div>
     </div>
   );

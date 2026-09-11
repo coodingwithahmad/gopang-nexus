@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 export async function createBlogPostAction(formData: FormData) {
@@ -20,7 +19,7 @@ export async function createBlogPostAction(formData: FormData) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
 
-  const { error } = await (supabase as any).from("blog_posts").insert({
+  const { error } = await supabase.from("blog_posts").insert({
     title,
     slug,
     excerpt,
@@ -67,6 +66,7 @@ export async function updateBlogPostAction(id: string, formData: FormData) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any)
     .from("blog_posts")
     .update({
@@ -92,7 +92,7 @@ export async function deleteBlogPostAction(id: string) {
 
   if (!user) throw new Error("Unauthorized");
 
-  const { error } = await (supabase as any).from("blog_posts").delete().eq("id", id);
+  const { error } = await supabase.from("blog_posts").delete().eq("id", id);
 
   if (error) throw new Error(error.message);
 

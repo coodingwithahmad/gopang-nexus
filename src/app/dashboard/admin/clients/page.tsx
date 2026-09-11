@@ -1,12 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
 import { formatDateTime } from "@/lib/utils";
-import Link from "next/link";
 import { Mail, Briefcase, Eye } from "lucide-react";
+
+type ClientRow = {
+  id: string;
+  email: string | null;
+  full_name: string | null;
+  company: string | null;
+  created_at: string;
+  projects?: Array<{ count: number }>;
+};
 
 export default async function ClientsDirectoryPage() {
   const supabase = await createClient();
 
-  const { data: clients } = await supabase
+  const { data: clientsData } = await supabase
     .from("profiles")
     .select(`
       *,
@@ -15,6 +23,7 @@ export default async function ClientsDirectoryPage() {
     `)
     .eq("role", "client")
     .order("created_at", { ascending: false });
+  const clients = (clientsData ?? []) as unknown as ClientRow[];
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -47,7 +56,7 @@ export default async function ClientsDirectoryPage() {
                   </td>
                 </tr>
               ) : (
-                clients.map((client: any) => (
+                clients.map((client) => (
                   <tr key={client.id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-6 py-4">
                       <div className="font-medium text-foreground flex items-center gap-2">

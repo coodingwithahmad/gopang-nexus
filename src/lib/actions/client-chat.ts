@@ -2,6 +2,12 @@
 
 import { createClient } from "@/lib/supabase/server";
 
+type ClientChatAuthor = {
+  id: string;
+  full_name: string | null;
+  role: "client" | "admin";
+};
+
 export async function getOrCreateClientChat() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -62,7 +68,7 @@ export async function getOrCreateClientChat() {
   const authorMap = authors?.reduce((acc, curr) => {
     acc[curr.id] = curr;
     return acc;
-  }, {} as Record<string, any>) ?? {};
+  }, {} as Record<string, ClientChatAuthor>) ?? {};
 
   return {
     status: "success" as const,
