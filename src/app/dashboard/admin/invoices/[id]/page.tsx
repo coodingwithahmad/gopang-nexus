@@ -50,7 +50,7 @@ export default async function InvoiceDetailPage({ params }: Props) {
   return (
     <div className="max-w-3xl mx-auto">
       <Link
-        href="/dashboard/invoices"
+        href="/dashboard/admin/invoices"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
       >
         <ArrowLeft size={14} />

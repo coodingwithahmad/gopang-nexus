@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import { Plus } from "lucide-react";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Invoices Manager",
@@ -43,7 +44,7 @@ export default async function AdminInvoicesPage() {
 
   if (error) {
     return (
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto">
         <p className="text-sm text-destructive">
           We couldn&apos;t load the invoices. Please try again.
         </p>
@@ -62,20 +63,20 @@ export default async function AdminInvoicesPage() {
     .reduce((sum, inv) => sum + inv.amount, 0);
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-6xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Invoices</h1>
           <p className="text-muted-foreground mt-1 text-sm">
             Manage billing and track revenue across all clients.
           </p>
         </div>
-        <button
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm cursor-not-allowed opacity-80"
-          title="Full invoice creator coming in Phase 4"
+        <Link
+          href="/dashboard/admin/invoices/new"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
         >
           <Plus size={16} /> Add Invoice
-        </button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -112,7 +113,12 @@ export default async function AdminInvoicesPage() {
                 invoicesList.map((invoice) => (
                   <tr key={invoice.id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-6 py-4 font-medium text-foreground">
-                      {invoice.invoice_no}
+                      <Link
+                        href={`/dashboard/admin/invoices/${invoice.id}`}
+                        className="hover:text-primary hover:underline"
+                      >
+                        {invoice.invoice_no}
+                      </Link>
                     </td>
                     <td className="px-6 py-4">
                       {invoice.client?.full_name || "Unknown"}

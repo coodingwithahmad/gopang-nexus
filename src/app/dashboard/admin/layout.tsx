@@ -28,7 +28,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-[calc(100vh-3rem)] bg-muted/20 px-4 sm:px-6 py-6">
+    <div className="min-h-[calc(100vh-3rem)] bg-muted/20 px-4 py-4 sm:px-6">
       <div className="max-w-6xl mx-auto">{children}</div>
     </div>
   );
