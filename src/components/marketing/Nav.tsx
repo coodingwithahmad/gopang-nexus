@@ -102,10 +102,10 @@ export function Nav() {
             </Link>
           )}
           <Link
-            href="/contact"
+            href="/login"
             className="inline-flex items-center px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
           >
-            Get in touch
+            Sign in
           </Link>
         </div>
 
@@ -161,11 +161,11 @@ export function Nav() {
               </Link>
             )}
             <Link
-              href="/contact"
+              href="/login"
               onClick={() => setMobileOpen(false)}
               className="block text-center px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
-              Get in touch
+              Sign in
             </Link>
           </div>
         </div>

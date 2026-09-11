@@ -73,9 +73,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 pt-5 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-          <p>
-            &copy; {year} {siteConfig.name}. All rights reserved.
-          </p>
+          <p>&copy; {year} GOPANG.</p>
           <div className="flex gap-4">
             <Link href="/privacy" className="hover:text-foreground transition-colors">
               Privacy Policy
