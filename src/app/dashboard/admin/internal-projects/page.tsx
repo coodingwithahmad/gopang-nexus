@@ -1,16 +1,29 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, Edit, Trash2 } from "lucide-react";
-import { formatDateTime } from "@/lib/utils";
+import { Plus, Edit } from "lucide-react";
 import { deleteInternalProjectAction } from "@/lib/actions/internal-projects";
+import { ConfirmSubmitButton } from "@/components/dashboard/ConfirmSubmitButton";
+
+type AdminInternalProject = {
+  id: string;
+  title: string;
+  description: string | null;
+  status: string;
+  start_date: string | null;
+  due_date: string | null;
+  client?: {
+    full_name: string | null;
+  } | null;
+};
 
 export default async function InternalProjectsPage() {
   const supabase = await createClient();
 
-  const { data: projects } = await supabase
+  const { data: projectsData } = await supabase
     .from("projects")
     .select("*, client:profiles!projects_client_id_fkey(full_name)")
     .order("created_at", { ascending: false });
+  const projects = (projectsData ?? []) as unknown as AdminInternalProject[];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -60,7 +73,7 @@ export default async function InternalProjectsPage() {
                   </td>
                 </tr>
               ) : (
-                projects.map((project: any) => (
+                projects.map((project) => (
                   <tr key={project.id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-6 py-4">
                       <div className="font-medium text-foreground">{project.title}</div>
@@ -93,18 +106,7 @@ export default async function InternalProjectsPage() {
                           <Edit size={16} />
                         </Link>
                         <form action={deleteInternalProjectAction.bind(null, project.id)}>
-                          <button
-                            type="submit"
-                            className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-md hover:bg-destructive/10"
-                            title="Delete"
-                            onClick={(e) => {
-                              if (!confirm("Are you sure you want to delete this project?")) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          <ConfirmSubmitButton message="Are you sure you want to delete this project?" />
                         </form>
                       </div>
                     </td>

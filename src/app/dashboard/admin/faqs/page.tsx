@@ -1,15 +1,26 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit } from "lucide-react";
 import { deleteFaqAction } from "@/lib/actions/faqs";
+import { ConfirmSubmitButton } from "@/components/dashboard/ConfirmSubmitButton";
+
+type AdminFaq = {
+  id: string;
+  question: string;
+  answer: string;
+  category: string | null;
+  sort_order: number | null;
+  is_active: boolean;
+};
 
 export default async function FaqsAdminPage() {
   const supabase = await createClient();
 
-  const { data: faqs } = await supabase
+  const { data: faqsData } = await supabase
     .from("faqs")
     .select("*")
     .order("sort_order", { ascending: true });
+  const faqs = (faqsData ?? []) as unknown as AdminFaq[];
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -49,7 +60,7 @@ export default async function FaqsAdminPage() {
                   </td>
                 </tr>
               ) : (
-                (faqs as any[]).map((faq: any) => (
+                faqs.map((faq) => (
                   <tr key={faq.id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-6 py-4">
                       <div className="font-medium text-foreground">{faq.question}</div>
@@ -84,18 +95,7 @@ export default async function FaqsAdminPage() {
                           <Edit size={16} />
                         </Link>
                         <form action={deleteFaqAction.bind(null, faq.id)}>
-                          <button
-                            type="submit"
-                            className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-md hover:bg-destructive/10"
-                            title="Delete"
-                            onClick={(e) => {
-                              if (!confirm("Are you sure you want to delete this FAQ?")) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          <ConfirmSubmitButton message="Are you sure you want to delete this FAQ?" />
                         </form>
                       </div>
                     </td>

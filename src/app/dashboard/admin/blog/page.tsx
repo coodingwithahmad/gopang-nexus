@@ -1,16 +1,29 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
 import { deleteBlogPostAction } from "@/lib/actions/blog";
+import { ConfirmSubmitButton } from "@/components/dashboard/ConfirmSubmitButton";
+
+type AdminBlogPost = {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  created_at: string;
+  published: boolean;
+  author?: {
+    full_name: string | null;
+  } | null;
+};
 
 export default async function BlogAdminPage() {
   const supabase = await createClient();
 
-  const { data: posts } = await supabase
+  const { data: postsData } = await supabase
     .from("blog_posts")
     .select("*, author:profiles!blog_posts_author_id_fkey(full_name)")
     .order("created_at", { ascending: false });
+  const posts = (postsData ?? []) as unknown as AdminBlogPost[];
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -50,7 +63,7 @@ export default async function BlogAdminPage() {
                   </td>
                 </tr>
               ) : (
-                posts.map((post: any) => (
+                posts.map((post) => (
                   <tr key={post.id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-6 py-4">
                       <div className="font-medium text-foreground">{post.title}</div>
@@ -83,18 +96,7 @@ export default async function BlogAdminPage() {
                           <Edit size={16} />
                         </Link>
                         <form action={deleteBlogPostAction.bind(null, post.id)}>
-                          <button
-                            type="submit"
-                            className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-md hover:bg-destructive/10"
-                            title="Delete"
-                            onClick={(e) => {
-                              if (!confirm("Are you sure you want to delete this post?")) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          <ConfirmSubmitButton message="Are you sure you want to delete this post?" />
                         </form>
                       </div>
                     </td>

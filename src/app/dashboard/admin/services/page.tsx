@@ -1,16 +1,26 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, Edit, Trash2 } from "lucide-react";
-import { formatDateTime } from "@/lib/utils";
+import { Plus, Edit } from "lucide-react";
 import { deleteServiceAction } from "@/lib/actions/services";
+import { ConfirmSubmitButton } from "@/components/dashboard/ConfirmSubmitButton";
+
+type AdminService = {
+  id: string;
+  title: string;
+  summary: string | null;
+  icon_name: string | null;
+  sort_order: number | null;
+  published: boolean;
+};
 
 export default async function ServicesAdminPage() {
   const supabase = await createClient();
 
-  const { data: services } = await supabase
+  const { data: servicesData } = await supabase
     .from("services")
     .select("*")
     .order("sort_order", { ascending: true });
+  const services = (servicesData ?? []) as unknown as AdminService[];
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -85,18 +95,7 @@ export default async function ServicesAdminPage() {
                           <Edit size={16} />
                         </Link>
                         <form action={deleteServiceAction.bind(null, service.id)}>
-                          <button
-                            type="submit"
-                            className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-md hover:bg-destructive/10"
-                            title="Delete"
-                            onClick={(e) => {
-                              if (!confirm("Are you sure you want to delete this service?")) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          <ConfirmSubmitButton message="Are you sure you want to delete this service?" />
                         </form>
                       </div>
                     </td>

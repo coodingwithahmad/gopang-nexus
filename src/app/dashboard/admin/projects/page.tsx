@@ -1,15 +1,26 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit } from "lucide-react";
 import { deletePortfolioProjectAction } from "@/lib/actions/admin-projects";
+import { ConfirmSubmitButton } from "@/components/dashboard/ConfirmSubmitButton";
+
+type AdminPortfolioProject = {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string | null;
+  published: boolean;
+  sort_order: number | null;
+};
 
 export default async function AdminProjectsPage() {
   const supabase = await createClient();
 
-  const { data: projects } = await supabase
+  const { data: projectsData } = await supabase
     .from("portfolio_projects")
     .select("id, title, slug, summary, published, sort_order")
     .order("sort_order", { ascending: true });
+  const projects = (projectsData ?? []) as unknown as AdminPortfolioProject[];
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -47,7 +58,7 @@ export default async function AdminProjectsPage() {
                   </td>
                 </tr>
               ) : (
-                projects.map((project: any) => (
+                projects.map((project) => (
                   <tr key={project.id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-6 py-4">
                       <div className="font-medium text-foreground">{project.title}</div>
@@ -78,18 +89,7 @@ export default async function AdminProjectsPage() {
                         </Link>
                         <form action={deletePortfolioProjectAction}>
                           <input type="hidden" name="id" value={project.id} />
-                          <button 
-                            type="submit" 
-                            className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-md hover:bg-destructive/10"
-                            title="Delete"
-                            onClick={(e) => {
-                              if (!confirm("Are you sure you want to delete this project?")) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          <ConfirmSubmitButton message="Are you sure you want to delete this project?" />
                         </form>
                       </div>
                     </td>
