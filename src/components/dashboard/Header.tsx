@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Bell, LogOut, Settings, ShieldCheck, UserRound } from "lucide-react";
+import {
+  Bell,
+  ChevronDown,
+  LogOut,
+  Settings,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth";
 import { getInitials } from "@/lib/utils";
 import type { Profile } from "@/types/database";
@@ -42,7 +49,7 @@ export function DashboardHeader({ profile }: HeaderProps) {
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
-          className="flex items-center gap-2 rounded-md px-1.5 py-1 text-left transition-colors hover:bg-muted"
+          className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-left shadow-sm transition-colors hover:bg-muted"
           aria-label="Open account menu"
           aria-expanded={open}
         >
@@ -55,6 +62,11 @@ export function DashboardHeader({ profile }: HeaderProps) {
           <span className="hidden sm:block text-sm text-foreground font-medium truncate max-w-40">
             {displayName}
           </span>
+          <ChevronDown
+            size={14}
+            className={`text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
+            aria-hidden="true"
+          />
         </button>
 
         {open && (
