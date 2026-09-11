@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { registerAction, type AuthActionState } from "@/lib/actions/auth";
-import { OAuthButtons } from "@/components/auth/OAuthButtons";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { siteConfig } from "@/config/site";
@@ -30,16 +29,7 @@ export default function RegisterPage() {
       </div>
 
       <div className="bg-background border border-border rounded-lg p-6 shadow-sm">
-        <div className="space-y-5">
-          <OAuthButtons />
-
-          <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-border" />
-            <span className="text-xs text-muted-foreground">or use email</span>
-            <div className="h-px flex-1 bg-border" />
-          </div>
-
-          <form action={formAction} className="space-y-4" noValidate>
+        <form action={formAction} className="space-y-4" noValidate>
             <div className="space-y-1.5">
               <Label htmlFor="fullName">Full Name</Label>
               <Input
@@ -99,8 +89,7 @@ export default function RegisterPage() {
             >
               {isPending ? "Creating account..." : "Register"}
             </button>
-          </form>
-        </div>
+        </form>
       </div>
 
       <p className="mt-4 text-center text-sm text-muted-foreground">

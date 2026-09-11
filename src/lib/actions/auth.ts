@@ -35,34 +35,10 @@ export type AuthActionState =
   | { status: "success"; message?: string }
   | { status: "error"; message: string };
 
-type OAuthProvider = "google" | "apple";
-
 function getSafeNext(value: FormDataEntryValue | null) {
   if (typeof value !== "string") return "/dashboard";
   if (!value.startsWith("/") || value.startsWith("//")) return "/dashboard";
   return value;
-}
-
-export async function oauthSignInAction(
-  provider: OAuthProvider,
-  formData: FormData,
-) {
-  const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const next = getSafeNext(formData.get("next"));
-
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider,
-    options: {
-      redirectTo: `${siteUrl}/api/auth/callback?next=${encodeURIComponent(next)}`,
-    },
-  });
-
-  if (error || !data.url) {
-    redirect("/login?error=oauth");
-  }
-
-  redirect(data.url);
 }
 
 export async function loginAction(
