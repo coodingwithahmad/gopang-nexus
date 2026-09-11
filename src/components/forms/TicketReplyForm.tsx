@@ -3,6 +3,7 @@
 import { useActionState, useRef, useEffect } from "react";
 import { replyToTicketAction, type TicketActionState } from "@/lib/actions/tickets";
 import { Textarea } from "@/components/ui/textarea";
+import { Send } from "lucide-react";
 
 const initialState: TicketActionState = { status: "idle" };
 
@@ -39,8 +40,9 @@ export function TicketReplyForm({ ticketId }: { ticketId: string }) {
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
         >
+          <Send size={14} />
           {isPending ? "Sending..." : "Send reply"}
         </button>
       </div>

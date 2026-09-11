@@ -133,6 +133,9 @@ function DesktopSidebar() {
           {siteConfig.shortName}
           <span className="text-sidebar-primary">.</span>
         </Link>
+        <span className="ml-2 rounded-md bg-sidebar-accent px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-sidebar-foreground/70">
+          Admin
+        </span>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {adminNavItems.map((item) => (
@@ -170,6 +173,9 @@ function MobileSidebar() {
           {siteConfig.shortName}
           <span className="text-sidebar-primary">.</span>
         </Link>
+        <span className="ml-2 rounded-md bg-sidebar-accent px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-sidebar-foreground/70">
+          Admin
+        </span>
         <button
           className="ml-auto p-2 rounded-md text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors"
           onClick={() => setOpen(true)}
@@ -201,6 +207,9 @@ function MobileSidebar() {
                 {siteConfig.shortName}
                 <span className="text-sidebar-primary">.</span>
               </Link>
+              <span className="mr-auto rounded-md bg-sidebar-accent px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-sidebar-foreground/70">
+                Admin
+              </span>
               <button
                 className="p-2 rounded-md text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors"
                 onClick={() => setOpen(false)}

@@ -2,7 +2,8 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CircleDot, Clock } from "lucide-react";
+import { formatDateTime } from "@/lib/utils";
 import {
   ChatThread,
   type ChatAuthor,
@@ -20,7 +21,10 @@ interface Props {
 
 type ChatTicketDetail = {
   id: string;
+  subject: string | null;
   status: string;
+  priority: string;
+  updated_at: string;
   client?: {
     full_name: string | null;
     email: string | null;
@@ -71,7 +75,7 @@ export default async function ChatDetailPage({ params }: Props) {
   return (
     <div className="flex flex-col h-full bg-background relative">
       {/* Mobile back button & Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border-b border-border shrink-0 bg-muted/20">
+      <div className="flex flex-col gap-3 p-4 border-b border-border shrink-0 bg-muted/20">
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard/chats"
@@ -87,6 +91,24 @@ export default async function ChatDetailPage({ params }: Props) {
               {ticket.client?.email || "No email"}
             </p>
           </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            <CircleDot size={12} />
+            {ticket.status.replace("_", " ")}
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            Priority: {ticket.priority}
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            <Clock size={12} />
+            Updated {formatDateTime(ticket.updated_at)}
+          </span>
+          {ticket.subject && (
+            <span className="inline-flex min-w-0 items-center rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+              <span className="truncate">{ticket.subject}</span>
+            </span>
+          )}
         </div>
       </div>
 

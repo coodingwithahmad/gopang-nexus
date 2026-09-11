@@ -24,9 +24,9 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-muted/30 mt-auto">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 lg:py-16">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="border-t border-border bg-muted/20 mt-auto">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           {/* Brand column */}
           <div className="lg:col-span-1">
             <Link
@@ -40,7 +40,7 @@ export function Footer() {
               IT solutions for businesses that need software they can actually
               use and maintain.
             </p>
-            <p className="mt-4 text-sm text-muted-foreground">
+            <p className="mt-3 text-sm text-muted-foreground">
               <a
                 href={`mailto:${siteConfig.contactEmail}`}
                 className="hover:text-foreground transition-colors"
@@ -56,7 +56,7 @@ export function Footer() {
               <h3 className="text-sm font-semibold text-foreground mb-3">
                 {title}
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-1.5">
                 {links.map((link) => (
                   <li key={link.href}>
                     <Link
@@ -72,7 +72,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
+        <div className="mt-8 pt-5 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <p>
             &copy; {year} {siteConfig.name}. All rights reserved.
           </p>

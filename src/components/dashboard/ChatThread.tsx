@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { formatDateTime } from "@/lib/utils";
 import { TicketReplyForm } from "@/components/forms/TicketReplyForm";
 import { useRouter } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
 
 export type ChatMessage = {
   id: string;
@@ -37,6 +38,7 @@ export function ChatThread({
   const supabase = createClient();
   const bottomRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const visibleMessages = useMemo(() => messages ?? [], [messages]);
 
   // Scroll to bottom on initial load and when new messages arrive
   useEffect(() => {
@@ -85,8 +87,16 @@ export function ChatThread({
 
   return (
     <div>
+      <div className="mb-4 flex items-center justify-between gap-3 rounded-md border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
+        <span>{visibleMessages.length} messages</span>
+        <span className="inline-flex items-center gap-1.5 text-right">
+          <ShieldCheck size={14} />
+          Admin replies are delivered in real time
+        </span>
+      </div>
+
       <div className="space-y-4 mb-6">
-        {messages?.map((msg) => {
+        {visibleMessages.map((msg) => {
           const isOwnMessage = msg.author_id === currentUserId;
           const author = authorMap[msg.author_id] ?? { full_name: "Unknown", role: "client" };
           const isAdmin = author.role === "admin";
@@ -107,10 +117,10 @@ export function ChatThread({
                 </span>
               </div>
               <div
-                className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap shadow-sm ${
+                className={`max-w-[85%] sm:max-w-[75%] rounded-lg px-4 py-2.5 text-sm whitespace-pre-wrap shadow-sm ${
                   isOwnMessage
-                    ? "bg-primary text-primary-foreground rounded-tr-sm"
-                    : "bg-background border border-border text-foreground rounded-tl-sm"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background border border-border text-foreground"
                 }`}
               >
                 {msg.content}

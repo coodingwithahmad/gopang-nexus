@@ -1,10 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Search } from "lucide-react";
 
 type ChatTicket = {
   id: string;
+  subject: string | null;
+  status: string;
+  priority: string;
+  created_at: string;
   updated_at: string;
   client?: {
     full_name: string | null;
@@ -28,9 +32,15 @@ export default async function ChatsIndexPage() {
     .from("tickets")
     .select(`
       id,
+      subject,
+      status,
+      priority,
+      created_at,
       updated_at,
       client:profiles!tickets_client_id_fkey(id, full_name, email)
-    `);
+    `)
+    .order("updated_at", { ascending: false })
+    .limit(50);
 
   const tickets = (ticketsData || []) as unknown as ChatTicket[];
   const ticketIds = tickets.map((t) => t.id);
@@ -41,7 +51,8 @@ export default async function ChatsIndexPage() {
       .from("ticket_messages")
       .select("ticket_id, content, created_at, is_internal")
       .in("ticket_id", ticketIds)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(150);
 
     messages?.forEach((msg) => {
       if (!latestMessages[msg.ticket_id]) {
@@ -56,6 +67,10 @@ export default async function ChatsIndexPage() {
     return new Date(timeB).getTime() - new Date(timeA).getTime();
   });
 
+  const openCount = tickets.filter((ticket) =>
+    ["open", "in_progress"].includes(ticket.status),
+  ).length;
+
   return (
     <>
       {/* DESKTOP: Empty State */}
@@ -69,8 +84,17 @@ export default async function ChatsIndexPage() {
 
       {/* MOBILE: List View */}
       <div className="md:hidden flex flex-col h-full overflow-hidden">
-        <div className="p-4 border-b border-border shrink-0">
-          <h2 className="font-bold text-lg text-foreground">Client Conversations</h2>
+        <div className="p-4 border-b border-border shrink-0 space-y-3">
+          <div>
+            <h2 className="font-semibold text-lg text-foreground">Client Conversations</h2>
+            <p className="text-xs text-muted-foreground">
+              {openCount} open of {tickets.length} conversations
+            </p>
+          </div>
+          <div className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
+            <Search size={14} />
+            <span>Newest conversations first</span>
+          </div>
         </div>
         <div className="flex-1 overflow-y-auto divide-y divide-border">
           {tickets.length === 0 ? (
@@ -99,6 +123,14 @@ export default async function ChatsIndexPage() {
                   <p className="text-xs text-muted-foreground mb-1 truncate">
                     {ticket.client?.email || "No email"}
                   </p>
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                      {ticket.status.replace("_", " ")}
+                    </span>
+                    <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                      {ticket.priority}
+                    </span>
+                  </div>
                   {latestMsg && (
                     <p className="text-sm text-muted-foreground truncate">
                       <span className="opacity-70">{latestMsg.is_internal ? "Internal: " : ""}</span>
