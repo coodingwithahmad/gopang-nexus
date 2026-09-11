@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Menu, X, LogOut } from "lucide-react";
+import { LayoutDashboard, Menu, X, LogOut } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { marketingNav } from "@/config/nav";
 import { cn } from "@/lib/utils";
@@ -15,22 +15,47 @@ export function Nav() {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<"client" | "admin" | null>(null);
   const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
+    let mounted = true;
+
+    async function syncUserRole(nextUser: User | null) {
+      if (!mounted) return;
+      setUser(nextUser);
+
+      if (!nextUser) {
+        setRole(null);
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", nextUser.id)
+        .single();
+
+      if (mounted) {
+        setRole(profile?.role ?? null);
+      }
+    }
 
     // Get initial session
     supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
+      syncUserRole(data.user);
     });
 
     // Listen for auth changes (login/logout from other tabs, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      syncUserRole(session?.user ?? null);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   async function handleSignOut() {
@@ -38,10 +63,13 @@ export function Nav() {
     const supabase = createClient();
     await supabase.auth.signOut();
     setUser(null);
+    setRole(null);
     setSigningOut(false);
     router.push("/");
     router.refresh();
   }
+
+  const isAdmin = role === "admin";
 
   return (
     <header className="sticky top-0 z-40 bg-background border-b border-border">
@@ -92,6 +120,15 @@ export function Nav() {
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Sign In
+            </Link>
+          )}
+          {isAdmin && (
+            <Link
+              href="/dashboard/admin"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors"
+            >
+              <LayoutDashboard size={14} />
+              Admin Panel
             </Link>
           )}
           <Link
@@ -158,6 +195,16 @@ export function Nav() {
                 className="block text-center px-4 py-2 rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
               >
                 Sign In
+              </Link>
+            )}
+            {isAdmin && (
+              <Link
+                href="/dashboard/admin"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
+              >
+                <LayoutDashboard size={14} />
+                Admin Panel
               </Link>
             )}
             <Link
